@@ -120,30 +120,46 @@ class VanDerWaalsEOS(CubicEOS):
             Critical temperature
         """
         super().__init__(pc, tc)
-        self.a = self.calc_a()
-        self.b = self.calc_b()
+        self.a = self.calc_a(pc, tc)
+        self.b = self.calc_b(pc, tc)
 
-    def calc_a(self):
+    @staticmethod
+    def calc_a(pc, tc):
         """
         Computes the attraction parameter
+
+        Parameters
+        ----------
+        pc : double
+            Critical pressure
+        tc : double
+            Critical temperature
 
         Returns
         -------
         double
             Attraction parameter
         """
-        return 0.421875*(gas_constant*self.tc)**2/self.pc
+        return 0.421875*(gas_constant*tc)**2/pc
 
-    def calc_b(self):
+    @staticmethod
+    def calc_b(pc, tc):
         """
         Computes the volume parameter
+
+        Parameters
+        ----------
+        pc : double
+            Critical pressure
+        tc : double
+            Critical temperature
 
         Returns
         -------
         double
             Volume parameter
         """
-        return 0.125*gas_constant*self.tc/self.pc
+        return 0.125*gas_constant*tc/pc
 
     def calc_pressure(self, t, v):
         """
