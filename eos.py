@@ -13,9 +13,9 @@ class CubicEOS(metaclass=ABCMeta):
         """
         Parameters
         ----------
-        pc : double
+        pc : float
             Critical pressure
-        tc : double
+        tc : float
             Critical temperature
         omega : float
             Accentric factor
@@ -71,7 +71,7 @@ class CubicEOS(metaclass=ABCMeta):
 
         Returns
         -------
-        double
+        float
             Attraction parameter
         """
         return f*(gas_constant*tc)**2/pc
@@ -92,7 +92,7 @@ class CubicEOS(metaclass=ABCMeta):
             
         Returns
         -------
-        double
+        float
             Volume parameter
         """
         return f*gas_constant*tc/pc
@@ -104,9 +104,9 @@ class CubicEOS(metaclass=ABCMeta):
 
         Parameters
         ----------
-        pr : double
+        pr : float
             Reduced pressure
-        tr : double
+        tr : float
             Reduced temperature
         alpha : float
             Temperature correction factor
@@ -115,7 +115,7 @@ class CubicEOS(metaclass=ABCMeta):
 
         Returns
         -------
-        double
+        float
             A = a*P/(R*T)^2
         """
         return f*alpha*pr/tr**2
@@ -127,16 +127,16 @@ class CubicEOS(metaclass=ABCMeta):
 
         Parameters
         ----------
-        pr : double
+        pr : float
             Reduced pressure
-        tr : double
+        tr : float
             Reduced temperature
         f : float
             Coefficient
 
         Returns
         -------
-        double
+        float
             B = b*P/(R*T)
         """
         return f*pr/tr
@@ -148,14 +148,14 @@ class CubicEOS(metaclass=ABCMeta):
 
         Parameters
         ----------
-        t : double
+        t : float
             Temperature
-        v : double
+        v : float
             Volume
 
         Returns
         -------
-        double
+        float
             Pressure
         """
         pass
@@ -168,9 +168,9 @@ class CubicEOS(metaclass=ABCMeta):
 
         Parameters
         ----------
-        p : double
+        p : float
             Pressure
-        t : double
+        t : float
             Temperature
         """
         pass
@@ -196,12 +196,12 @@ class CubicEOS(metaclass=ABCMeta):
 
         Parameters
         ----------
-        z : double
+        z : float
             Z-factor
 
         Returns
         -------
-        double
+        float
             Fugacity coefficient
         """
         pass
@@ -218,9 +218,9 @@ class VanDerWaalsEOS(CubicEOS):
         """
         Parameters
         ----------
-        pc : double
+        pc : float
             Critical pressure
-        tc : double
+        tc : float
             Critical temperature
         """
         a = self._calc_a(pc, tc, self.__OMEGA_A)
@@ -233,14 +233,14 @@ class VanDerWaalsEOS(CubicEOS):
 
         Parameters
         ----------
-        t : double
+        t : float
             Temperature
-        v : double
+        v : float
             Volume
 
         Returns
         -------
-        double
+        float
             Pressure
         """
         return gas_constant*t/(v - self.b) - self.a/v**2
@@ -252,9 +252,9 @@ class VanDerWaalsEOS(CubicEOS):
 
         Parameters
         ----------
-        p : double
+        p : float
             Pressure
-        t : double
+        t : float
             Temperature
         """
         pr = p/self.pc
@@ -286,12 +286,12 @@ class VanDerWaalsEOS(CubicEOS):
 
         Parameters
         ----------
-        z : double
+        z : float
             Z-factor
 
         Returns
         -------
-        double
+        float
             Fugacity coefficient
         """
         a = self.__ar
@@ -310,11 +310,11 @@ class SoaveRedlichKwongEOS(CubicEOS):
         """
         Parameters
         ----------
-        pc : double
+        pc : float
             Critical pressure
-        tc : double
+        tc : float
             Critical temperature
-        omega : double
+        omega : float
             Accentric factor
         """
         a = self._calc_a(pc, tc, self.__OMEGA_A)
@@ -339,7 +339,7 @@ class SoaveRedlichKwongEOS(CubicEOS):
 
         Returns
         -------
-        double
+        float
             The correction factor due to accentric factor.
         """
         return 0.48 + 1.574*omega - 0.176*omega**2
@@ -351,14 +351,14 @@ class SoaveRedlichKwongEOS(CubicEOS):
 
         Parameters
         -----------
-        tr : double
+        tr : float
             Reduced temperature
         m : float
             Accentric correction factor
 
         Returns
         -------
-        double
+        float
             Temperature correction factor
         """
         return (1.0 + m*(1.0 - np.sqrt(tr)))**2
@@ -369,14 +369,14 @@ class SoaveRedlichKwongEOS(CubicEOS):
 
         Parameters
         ----------
-        t : double
+        t : float
             Temperature
-        v : double
+        v : float
             Volume
 
         Returns
         -------
-        double
+        float
             Pressure
         """
         a = self.a
@@ -392,9 +392,9 @@ class SoaveRedlichKwongEOS(CubicEOS):
 
         Parameters
         ----------
-        p : double
+        p : float
             Pressure
-        t : double
+        t : float
             Temperature
         """
         pr = p/self.pc
@@ -427,12 +427,12 @@ class SoaveRedlichKwongEOS(CubicEOS):
 
         Parameters
         ----------
-        z : double
+        z : float
             Z-factor
 
         Returns
         -------
-        double
+        float
             Fugacity coefficient
         """
         a = self.__ar
@@ -454,11 +454,11 @@ class PengRobinsonEOS(CubicEOS):
         """
         Parameters
         ----------
-        pc : double
+        pc : float
             Critical pressure
-        tc : double
+        tc : float
             Critical temperature
-        omega : double
+        omega : float
             Accentric factor
         """
         a = self._calc_a(pc, tc, self.__OMEGA_A)
@@ -478,7 +478,7 @@ class PengRobinsonEOS(CubicEOS):
 
         Returns
         -------
-        double
+        float
             The correction factor due to accentric factor.
         """
         return 0.3796 + 1.485*omega - 0.1644*omega**2 + 0.01667*omega**3
@@ -490,14 +490,14 @@ class PengRobinsonEOS(CubicEOS):
 
         Parameters
         -----------
-        tr : double
+        tr : float
             Reduced temperature
         m : float
             Accentric correction factor
 
         Returns
         -------
-        double
+        float
             Temperature correction factor
         """
         return (1.0 + m*(1.0 - np.sqrt(tr)))**2
@@ -508,14 +508,14 @@ class PengRobinsonEOS(CubicEOS):
 
         Parameters
         ----------
-        t : double
+        t : float
             Temperature
-        v : double
+        v : float
             Volume
 
         Returns
         -------
-        double
+        float
             Pressure
         """
         a = self.a
@@ -531,9 +531,9 @@ class PengRobinsonEOS(CubicEOS):
 
         Parameters
         ----------
-        p : double
+        p : float
             Pressure
-        t : double
+        t : float
             Temperature
         """
         pr = p/self.pc
@@ -566,12 +566,12 @@ class PengRobinsonEOS(CubicEOS):
 
         Parameters
         ----------
-        z : double
+        z : float
             Z-factor
 
         Returns
         -------
-        double
+        float
             Fugacity coefficient
         """
         a = self.__ar
