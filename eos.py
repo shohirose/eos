@@ -581,3 +581,32 @@ class PengRobinsonEOS(CubicEOS):
         DELTA2 = self.__DELTA2
         return np.exp(z - 1.0 - np.log(z - b) - a/(2.0*SQRT2*b)
                       * np.log((z + DELTA1*b)/(z - DELTA2*b)))
+
+
+def create(kind, pc, tc, omega):
+    """
+    Create an EoS object.
+
+    Parameters
+    ----------
+    kind : string
+        Type of EoS
+    pc : float
+        Critical pressure
+    tc : float
+        Critical temperature
+    omega : float
+        Accentric factor
+
+    Returns
+    -------
+    VanDerWaalsEOS, SoaveRedlichKwongEOS, or PengRobinsonEOS
+    """
+    if kind == 'VDW':
+        return VanDerWaalsEOS(pc, tc)
+    elif kind == 'SRK':
+        return SoaveRedlichKwongEOS(pc, tc, omega)
+    elif kind == 'PR':
+        return PengRobinsonEOS(pc, tc, omega)
+    else:
+        raise ValueError('kind must be VDW, SRK, or PR.')
