@@ -7,24 +7,9 @@ from scipy.constants import gas_constant
 class CubicEOS(metaclass=ABCMeta):
     """
     Base class for cubic equation of states.
-
-    Parameters
-    ----------
-    pc : double
-        Critical pressure
-    tc : double
-        Critical temperature
-    a : double
-        Attraction parameter without temperature correction
-    b : double
-        Volume parameter
-    __fa : double
-        Coefficient for attraction parameter
-    __fb : double
-        Coefficient for volume parameter
     """
 
-    def __init__(self, pc, tc, fa, fb):
+    def __init__(self, pc, tc, omega, a, b):
         """
         Parameters
         ----------
@@ -32,41 +17,88 @@ class CubicEOS(metaclass=ABCMeta):
             Critical pressure
         tc : double
             Critical temperature
-        fa : double
-            Coefficient for attraction parameter
-        fb : double
-            Coefficient for volume parameter
+        omega : float
+            Accentric factor
+        a : float
+            Attraction parameter without temperature correction
+        b : float
+            Volume parameter
         """
-        self.pc = pc
-        self.tc = tc
-        self.__fa = fa
-        self.__fb = fb
-        self.a = self.__calc_a()
-        self.b = self.__calc_b()
+        self.__pc = pc
+        self.__tc = tc
+        self.__omega = omega
+        self.__a = a
+        self.__b = b
 
-    def __calc_a(self):
+    @property
+    def pc(self):
+        """ Critical pressure """
+        return self.__pc
+
+    @property
+    def tc(self):
+        """ Critical temperature """
+        return self.__tc
+    
+    @property
+    def omega(self):
+        """ Accentric factor """
+        return self.__omega
+    
+    @property
+    def a(self):
+        """ Attraction parameter without temperature correction """
+        return self.__a
+
+    @property
+    def b(self):
+        """ Volume parameter """
+        return self.__b
+
+    @staticmethod
+    def _calc_a(pc, tc, f):
         """
-        Computes the attraction parameter
+        Computes the attraction parameter without temperature correction
+
+        Parameters
+        ----------
+        pc : float
+            Critical pressure
+        tc : float
+            Critical temperature
+        f : float
+            Coefficient
 
         Returns
         -------
         double
-            Attraction parameter without temperature correction
+            Attraction parameter
         """
-        return self.__fa*(gas_constant*self.tc)**2/self.pc
+        return f*(gas_constant*tc)**2/pc
 
-    def __calc_b(self):
+    @staticmethod
+    def _calc_b(pc, tc, f):
         """
         Computes the volume parameter
 
+        Parameters
+        ----------
+        pc : float
+            Critical pressure
+        tc : float
+            Critical temperature
+        f : float
+            Coefficient
+            
         Returns
         -------
         double
             Volume parameter
         """
-        return self.__fb*gas_constant*self.tc/self.pc
+        return f*gas_constant*tc/pc
 
-    def calc_A(self, pr, tr):
+    @staticmethod
+    def _calc_ar(pr, tr, alpha, f):
         """
         Computes A = a*P/(R*T)^2
 
@@ -76,15 +108,20 @@ class CubicEOS(metaclass=ABCMeta):
             Reduced pressure
         tr : double
             Reduced temperature
+        alpha : float
+            Temperature correction factor
+        f : float
+            Coefficient
 
         Returns
         -------
         double
             A = a*P/(R*T)^2
         """
-        return self.__fa*pr/tr**2
+        return f*alpha*pr/tr**2
 
-    def calc_B(self, pr, tr):
+    @staticmethod
+    def _calc_br(pr, tr, f):
         """
         Computes B = b*P/(R*T)
 
@@ -94,13 +131,15 @@ class CubicEOS(metaclass=ABCMeta):
             Reduced pressure
         tr : double
             Reduced temperature
+        f : float
+            Coefficient
 
         Returns
         -------
         double
             B = b*P/(R*T)
         """
-        return self.__fb*pr/tr
+        return f*pr/tr
 
     @abstractmethod
     def calc_pressure(self, t, v):
@@ -172,6 +211,8 @@ class VanDerWaalsEOS(CubicEOS):
     """
     van der Waals equation of state.
     """
+    __OMEGA_A = 0.421875
+    __OMEGA_B = 0.125
 
     def __init__(self, pc, tc):
         """
@@ -182,7 +223,9 @@ class VanDerWaalsEOS(CubicEOS):
         tc : double
             Critical temperature
         """
-        super().__init__(pc, tc, 0.421875, 0.125)
+        a = self._calc_a(pc, tc, self.__OMEGA_A)
+        b = self._calc_b(pc, tc, self.__OMEGA_B)
+        super().__init__(pc, tc, None, a, b)
 
     def calc_pressure(self, t, v):
         """
@@ -216,8 +259,8 @@ class VanDerWaalsEOS(CubicEOS):
         """
         pr = p/self.pc
         tr = t/self.tc
-        self.__A = self.calc_A(pr, tr)
-        self.__B = self.calc_B(pr, tr)
+        self.__ar = self._calc_ar(pr, tr, 1.0, self.__OMEGA_A)
+        self.__br = self._calc_br(pr, tr, self.__OMEGA_B)
 
     def calc_zfactor(self):
         """
@@ -229,9 +272,9 @@ class VanDerWaalsEOS(CubicEOS):
         numpy.array
             Z-factors
         """
-        A = self.__A
-        B = self.__B
-        p = [1.0, -B - 1.0, A, -A*B]
+        a = self.__ar
+        b = self.__br
+        p = [1.0, -b - 1.0, a, -a*b]
         x = np.roots(p)
         # Returns only real roots
         return np.array([xi.real for xi in x if not np.iscomplex(xi)])
@@ -251,20 +294,17 @@ class VanDerWaalsEOS(CubicEOS):
         double
             Fugacity coefficient
         """
-        A = self.__A
-        B = self.__B
-        return np.exp(-np.log(z - B) - A/z + z - 1.0)
+        a = self.__ar
+        b = self.__br
+        return np.exp(-np.log(z - b) - a/z + z - 1.0)
 
 
 class SoaveRedlichKwongEOS(CubicEOS):
     """
     Soave-Redlich-Kwong equation of state.
-
-    Parameters
-    ----------
-    omega : double
-        Accentric factor
     """
+    __OMEGA_A = 0.42748
+    __OMEGA_B = 0.08664
 
     def __init__(self, pc, tc, omega):
         """
@@ -277,23 +317,35 @@ class SoaveRedlichKwongEOS(CubicEOS):
         omega : double
             Accentric factor
         """
-        super().__init__(pc, tc, 0.42748, 0.08664)
-        self.omega = omega
-        self.__m = self.__calc_m()
+        a = self._calc_a(pc, tc, self.__OMEGA_A)
+        b = self._calc_b(pc, tc, self.__OMEGA_B)
+        super().__init__(pc, tc, omega, a, b)
+        self.__m = self.__calc_m(omega)
 
-    def __calc_m(self):
+    @property
+    def m(self):
+        """ Accentric correction factor """
+        return self.__m
+
+    @staticmethod
+    def __calc_m(omega):
         """
         Computes the correction factor due to accentric factor.
+
+        Parameters
+        ----------
+        omega : float
+            Accentric factor
 
         Returns
         -------
         double
             The correction factor due to accentric factor.
         """
-        x = self.omega
-        return 0.48 + 1.574*x - 0.176*x**2
+        return 0.48 + 1.574*omega - 0.176*omega**2
 
-    def __calc_alpha(self, tr):
+    @staticmethod
+    def __calc_alpha(tr, m):
         """
         Computes temperature correction factor.
 
@@ -301,13 +353,15 @@ class SoaveRedlichKwongEOS(CubicEOS):
         -----------
         tr : double
             Reduced temperature
+        m : float
+            Accentric correction factor
 
         Returns
         -------
         double
             Temperature correction factor
         """
-        return (1.0 + self.__m*(1.0 - np.sqrt(tr)))**2
+        return (1.0 + m*(1.0 - np.sqrt(tr)))**2
 
     def calc_pressure(self, t, v):
         """
@@ -328,7 +382,7 @@ class SoaveRedlichKwongEOS(CubicEOS):
         a = self.a
         b = self.b
         tr = t/self.tc
-        alpha = self.__calc_alpha(tr)
+        alpha = self.__calc_alpha(tr, self.m)
         return gas_constant*t/(v - b) - a*alpha/(v*(v + b))
 
     def set(self, p, t):
@@ -345,9 +399,9 @@ class SoaveRedlichKwongEOS(CubicEOS):
         """
         pr = p/self.pc
         tr = t/self.tc
-        alpha = self.__calc_alpha(tr)
-        self.__A = self.calc_A(pr, tr)*alpha
-        self.__B = self.calc_B(pr, tr)
+        alpha = self.__calc_alpha(tr, self.m)
+        self.__ar = self._calc_ar(pr, tr, alpha, self.__OMEGA_A)
+        self.__br = self._calc_br(pr, tr, self.__OMEGA_B)
 
     def calc_zfactor(self):
         """
@@ -359,9 +413,9 @@ class SoaveRedlichKwongEOS(CubicEOS):
         numpy.array
             Z-factors
         """
-        A = self.__A
-        B = self.__B
-        p = [1.0, -1.0, A - B*(1.0 + B), -A*B]
+        a = self.__ar
+        b = self.__br
+        p = [1.0, -1.0, a - b*(1.0 + b), -a*b]
         x = np.roots(p)
         # Returns only real roots
         return np.array([xi.real for xi in x if not np.iscomplex(xi)])
@@ -381,42 +435,56 @@ class SoaveRedlichKwongEOS(CubicEOS):
         double
             Fugacity coefficient
         """
-        A = self.__A
-        B = self.__B
-        return np.exp(z - 1.0 - np.log(z - B) - A**2/B*np.log(B/z + 1.0))
+        a = self.__ar
+        b = self.__br
+        return np.exp(z - 1.0 - np.log(z - b) - a**2/b*np.log(b/z + 1.0))
 
 
 class PengRobinsonEOS(CubicEOS):
     """
     Peng-Robinson equation of state.
-
-    Parameters
-    ----------
-    SQRT2 : double
-        the square root of 2.
-    omega : double
-        Accentric factor
     """
     __SQRT2 = math.sqrt(2.0)
+    __DELTA1 = 1.0 + math.sqrt(2.0)
+    __DELTA2 = 1.0 - math.sqrt(2.0)
+    __OMEGA_A = 0.45724
+    __OMEGA_B = 0.07780
 
     def __init__(self, pc, tc, omega):
-        super().__init__(pc, tc, 0.45724, 0.07780)
-        self.omega = omega
-        self.__m = self.__calc_m()
+        """
+        Parameters
+        ----------
+        pc : double
+            Critical pressure
+        tc : double
+            Critical temperature
+        omega : double
+            Accentric factor
+        """
+        a = self._calc_a(pc, tc, self.__OMEGA_A)
+        b = self._calc_b(pc, tc, self.__OMEGA_B)
+        super().__init__(pc, tc, omega, a, b)
+        self.__m = self.__calc_m(omega)
 
-    def __calc_m(self):
+    @staticmethod
+    def __calc_m(omega):
         """
         Computes the correction factor due to accentric factor.
+
+        Parameters
+        ----------
+        omega : float
+            Accentric factor
 
         Returns
         -------
         double
             The correction factor due to accentric factor.
         """
-        x = self.omega
-        return 0.3796 + 1.485*x - 0.1644*x**2 + 0.01667*x**3
+        return 0.3796 + 1.485*omega - 0.1644*omega**2 + 0.01667*omega**3
 
-    def __calc_alpha(self, tr):
+    @staticmethod
+    def __calc_alpha(tr, m):
         """
         Computes temperature correction factor.
 
@@ -424,13 +492,15 @@ class PengRobinsonEOS(CubicEOS):
         -----------
         tr : double
             Reduced temperature
+        m : float
+            Accentric correction factor
 
         Returns
         -------
         double
             Temperature correction factor
         """
-        return (1.0 + self.__m*(1.0 - np.sqrt(tr)))**2
+        return (1.0 + m*(1.0 - np.sqrt(tr)))**2
 
     def calc_pressure(self, t, v):
         """
@@ -451,7 +521,7 @@ class PengRobinsonEOS(CubicEOS):
         a = self.a
         b = self.b
         tr = t/self.tc
-        alpha = self.__calc_alpha(tr)
+        alpha = self.__calc_alpha(tr, self.__m)
         return gas_constant*t/(v - b) - a*alpha/((v - b)*(v + b) + 2.0*b*v)
 
     def set(self, p, t):
@@ -468,9 +538,9 @@ class PengRobinsonEOS(CubicEOS):
         """
         pr = p/self.pc
         tr = t/self.tc
-        alpha = self.__calc_alpha(tr)
-        self.__A = self.calc_A(pr, tr)*alpha
-        self.__B = self.calc_B(pr, tr)
+        alpha = self.__calc_alpha(tr, self.__m)
+        self.__ar = self._calc_ar(pr, tr, alpha, self.__OMEGA_A)
+        self.__br = self._calc_br(pr, tr, self.__OMEGA_B)
 
     def calc_zfactor(self):
         """
@@ -482,9 +552,9 @@ class PengRobinsonEOS(CubicEOS):
         numpy.array
             Z-factors
         """
-        A = self.__A
-        B = self.__B
-        p = [1.0, B - 1.0, A - (3.0*B + 2.0)*B, (-A + (1.0 + B)*B)*B]
+        a = self.__ar
+        b = self.__br
+        p = [1.0, b - 1.0, a - (3.0*b + 2.0)*b, (-a + (1.0 + b)*b)*b]
         x = np.roots(p)
         # Returns only real roots
         return np.array([xi.real for xi in x if not np.iscomplex(xi)])
@@ -504,9 +574,10 @@ class PengRobinsonEOS(CubicEOS):
         double
             Fugacity coefficient
         """
-        A = self.__A
-        B = self.__B
+        a = self.__ar
+        b = self.__br
         SQRT2 = self.__SQRT2
-        return np.exp(z - 1.0 - np.log(z - B) - A/(2.0*SQRT2*B)
-                      * np.log((z + (1.0 + SQRT2)*B) /
-                               (z - (1.0 - SQRT2)*B)))
+        DELTA1 = self.__DELTA1
+        DELTA2 = self.__DELTA2
+        return np.exp(z - 1.0 - np.log(z - b) - a/(2.0*SQRT2*b)
+                      * np.log((z + DELTA1*b)/(z - DELTA2*b)))
