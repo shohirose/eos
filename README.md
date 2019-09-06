@@ -41,11 +41,11 @@ Then, Z-factor and fugacity coefficient at a given pressure and temperature can 
 # Van der Waals EoS
 vdw_eos = eos.VanDerWaalsEOS(pc, tc)
 # set P and T
-eos.set(p=3.0e6, t=180.0)
+vdw_eos.set(p=3.0e6, t=180.0)
 # Computes Z-factor
-z = eos.calc_zfactor()
+z = vdw_eos.calc_zfactor()
 # Computes fugacity coefficient
-phi = eos.calc_fugacity_coeff(z[0])
+phi = vdw_eos.calc_fugacity_coeff(z[0])
 ```
 
 P-V plot at constant temperature can be created in the following mannter.
