@@ -1,6 +1,30 @@
-from eos import CubicEosBase, IsobaricIsothermalState
+from eos import CubicEosBase
 import numpy as np
 from scipy.constants import gas_constant
+
+
+class IsobaricIsothermalState:
+    """ Constant pressure-temperature state for SRK EoS """
+
+    def __init__(self, A, B):
+        """
+        Parameters
+        ----------
+        A : float
+            Reduced attraction parameter
+        B : float
+            Reduced repulsion parameter
+        """
+        self.__A = A
+        self.__B = B
+
+    @property
+    def reduced_attraction_param(self):
+        return self.__A
+
+    @property
+    def reduced_repulsion_param(self):
+        return self.__B
 
 
 class SoaveRedlichKwongEos(CubicEosBase):
@@ -110,12 +134,12 @@ class SoaveRedlichKwongEos(CubicEosBase):
         ----------
         t : float
             Temperature
-        v : float
+        v : array_like
             Volume
 
         Returns
         -------
-        float
+        array_like
             Pressure
         """
         tr = self.reduced_temperature(t)
@@ -143,9 +167,10 @@ class SoaveRedlichKwongEos(CubicEosBase):
         alpha = self._calc_alpha(tr)
         A = self._calc_reduced_attraction_param(p, t, alpha)
         B = self._calc_reduced_repulsion_param(p, t)
-        return IsobaricIsothermalState(p, t, A, B)
+        return IsobaricIsothermalState(A, B)
 
-    def zfactors(self, state):
+    @staticmethod
+    def zfactors(state):
         """
         Computes Z-factors
 
@@ -160,9 +185,10 @@ class SoaveRedlichKwongEos(CubicEosBase):
         """
         A = state.reduced_attraction_param
         B = state.reduced_repulsion_param
-        return self.solve_cubic_eq(self._zfactor_cubic_eq(A, B))
+        return CubicEosBase.solve_cubic_eq(SoaveRedlichKwongEos._zfactor_cubic_eq(A, B))
 
-    def ln_fugacity_coeff(self, z, state):
+    @staticmethod
+    def ln_fugacity_coeff(z, state):
         """
         Computes the natural log of fugacity coefficient
 
@@ -174,14 +200,15 @@ class SoaveRedlichKwongEos(CubicEosBase):
 
         Returns
         -------
-        float
-            Natural log of fugacity coefficient
+        array_like
+            Natural log of fugacity coefficients
         """
         A = state.reduced_attraction_param
         B = state.reduced_repulsion_param
-        return self._ln_fugacity_coeff_impl(z, A, B)
+        return SoaveRedlichKwongEos._ln_fugacity_coeff_impl(z, A, B)
 
-    def fugacity_coeff(self, z, state):
+    @staticmethod
+    def fugacity_coeff(z, state):
         """
         Computes fugacity coefficient
 
@@ -193,7 +220,7 @@ class SoaveRedlichKwongEos(CubicEosBase):
 
         Returns
         -------
-        float
+        array_like
             Fugacity coefficient
         """
-        return np.exp(self.ln_fugacity_coeff(z, state))
+        return np.exp(SoaveRedlichKwongEos.ln_fugacity_coeff(z, state))

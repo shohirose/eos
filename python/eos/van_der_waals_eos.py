@@ -1,6 +1,30 @@
-from eos import CubicEosBase, IsobaricIsothermalState
+from eos import CubicEosBase
 from scipy.constants import gas_constant
 import numpy as np
+
+
+class IsobaricIsothermalState:
+    """ Constant pressure-temperature state for PR EoS """
+
+    def __init__(self, A, B):
+        """
+        Parameters
+        ----------
+        A : float
+            Reduced attraction parameter
+        B : float
+            Reduced repulsion parameter
+        """
+        self.__A = A
+        self.__B = B
+
+    @property
+    def reduced_attraction_param(self):
+        return self.__A
+
+    @property
+    def reduced_repulsion_param(self):
+        return self.__B
 
 class VanDerWaalsEos(CubicEosBase):
     """
@@ -68,12 +92,12 @@ class VanDerWaalsEos(CubicEosBase):
         ----------
         t : float
             Temperature
-        v : float
+        v : array_like
             Volume
 
         Returns
         -------
-        float
+        array_like
             Pressure
         """
         a = self.attraction_param
@@ -97,9 +121,10 @@ class VanDerWaalsEos(CubicEosBase):
         """
         A = self._calc_reduced_attraction_param(p, t)
         B = self._calc_reduced_repulsion_param(p, t)
-        return IsobaricIsothermalState(p, t, A, B)
+        return IsobaricIsothermalState(A, B)
 
-    def zfactors(self, state):
+    @staticmethod
+    def zfactors(state):
         """
         Computes Z-factor
 
@@ -114,9 +139,10 @@ class VanDerWaalsEos(CubicEosBase):
         """
         A = state.reduced_attraction_param
         B = state.reduced_repulsion_param
-        return self.solve_cubic_eq(self._zfactor_cubic_eq(A, B))
+        return CubicEosBase.solve_cubic_eq(VanDerWaalsEos._zfactor_cubic_eq(A, B))
 
-    def ln_fugacity_coeff(self, z, state):
+    @staticmethod
+    def ln_fugacity_coeff(z, state):
         """
         Computes the natural log of fugacity coefficient
 
@@ -128,14 +154,15 @@ class VanDerWaalsEos(CubicEosBase):
 
         Returns
         -------
-        float
-            Natural log of fugacity coefficient
+        array_like
+            Natural log of fugacity coefficients
         """
         A = state.reduced_attraction_param
         B = state.reduced_repulsion_param
-        return self._ln_fugacity_coeff_impl(z, A, B)
+        return VanDerWaalsEos._ln_fugacity_coeff_impl(z, A, B)
 
-    def fugacity_coeff(self, z, state):
+    @staticmethod
+    def fugacity_coeff(z, state):
         """
         Computes fugacity coefficient
 
@@ -147,7 +174,7 @@ class VanDerWaalsEos(CubicEosBase):
 
         Returns
         -------
-        float
-            Fugacity coefficient
+        array_like
+            Fugacity coefficients
         """
-        return np.exp(self.ln_fugacity_coeff(z, state))
+        return np.exp(VanDerWaalsEos.ln_fugacity_coeff(z, state))

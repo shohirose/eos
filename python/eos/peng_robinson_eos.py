@@ -1,6 +1,30 @@
-from eos import CubicEosBase, IsobaricIsothermalState
+from eos import CubicEosBase
 import numpy as np
 from scipy.constants import gas_constant
+
+
+class IsobaricIsothermalState:
+    """ Constant pressure-temperature state for PR EoS """
+
+    def __init__(self, A, B):
+        """
+        Parameters
+        ----------
+        A : float
+            Reduced attraction parameter
+        B : float
+            Reduced repulsion parameter
+        """
+        self.__A = A
+        self.__B = B
+
+    @property
+    def reduced_attraction_param(self):
+        return self.__A
+
+    @property
+    def reduced_repulsion_param(self):
+        return self.__B
 
 
 class PengRobinsonEos(CubicEosBase):
@@ -134,12 +158,12 @@ class PengRobinsonEos(CubicEosBase):
         ----------
         t : float
             Temperature
-        v : float
+        v : array_like
             Volume
 
         Returns
         -------
-        float
+        array_like
             Pressure
         """
         tr = self.reduced_temperature(t)
@@ -148,7 +172,7 @@ class PengRobinsonEos(CubicEosBase):
         b = self.repulsion_param
         return gas_constant*t/(v - b) - a*alpha/((v - b)*(v + b) + 2.0*b*v)
 
-    def create_state(self, p, t)->IsobaricIsothermalState:
+    def create_state(self, p, t) -> IsobaricIsothermalState:
         """
         Creates constant pressure-temperature state
 
@@ -167,9 +191,10 @@ class PengRobinsonEos(CubicEosBase):
         alpha = self._calc_alpha(tr)
         A = self._calc_reduced_attraction_param(p, t, alpha)
         B = self._calc_reduced_repulsion_param(p, t)
-        return IsobaricIsothermalState(p, t, A, B)
+        return IsobaricIsothermalState(A, B)
 
-    def zfactors(self, state:IsobaricIsothermalState):
+    @staticmethod
+    def zfactors(state: IsobaricIsothermalState):
         """
         Computes Z-factors
 
@@ -184,9 +209,10 @@ class PengRobinsonEos(CubicEosBase):
         """
         A = state.reduced_attraction_param
         B = state.reduced_repulsion_param
-        return self.solve_cubic_eq(self._zfactor_cubic_eq(A, B))
+        return CubicEosBase.solve_cubic_eq(PengRobinsonEos._zfactor_cubic_eq(A, B))
 
-    def ln_fugacity_coeff(self, z, state:IsobaricIsothermalState):
+    @classmethod
+    def ln_fugacity_coeff(cls, z, state: IsobaricIsothermalState):
         """
         Computes the natural log of fugacity coefficient
 
@@ -198,16 +224,17 @@ class PengRobinsonEos(CubicEosBase):
 
         Returns
         -------
-        float
-            Natural log of fugacity coefficient
+        array_like
+            Natural log of fugacity coefficients
         """
         A = state.reduced_attraction_param
         B = state.reduced_repulsion_param
-        return self._ln_fugacity_coeff_impl(z, A, B)
+        return cls._ln_fugacity_coeff_impl(z, A, B)
 
-    def fugacity_coeff(self, z, state:IsobaricIsothermalState):
+    @classmethod
+    def fugacity_coeff(cls, z, state: IsobaricIsothermalState):
         """
-        Computes fugacity coefficient
+        Computes fugacity coefficients
 
         Parameters
         ----------
@@ -217,7 +244,7 @@ class PengRobinsonEos(CubicEosBase):
 
         Returns
         -------
-        float
-            Fugacity coefficient
+        array_like
+            Fugacity coefficients
         """
-        return np.exp(self.ln_fugacity_coeff(z, state))
+        return np.exp(cls.ln_fugacity_coeff(z, state))
