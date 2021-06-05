@@ -1,4 +1,4 @@
-from eos import CubicEosBase, PengRobinsonEos, VanDerWaalsEos, SoaveRedlichKwongEos
+from eos import CubicEosBase, create_eos
 from scipy.constants import gas_constant
 import pytest
 
@@ -31,7 +31,7 @@ def test_van_der_waals_eos():
     # Methane
     pc = 4e6       # Critical pressure [Pa]
     tc = 190.6     # Critical temperature [K]
-    eos = VanDerWaalsEos(pc, tc)
+    eos = create_eos('VDW', pc, tc)
 
     p = 3e6
     t = 180
@@ -47,7 +47,7 @@ def test_soave_redlich_kwong_eos():
     pc = 4e6       # Critical pressure [Pa]
     tc = 190.6     # Critical temperature [K]
     omega = 0.008  # Acentric factor
-    eos = SoaveRedlichKwongEos(pc, tc, omega)
+    eos = create_eos('SRK', pc, tc, omega=omega)
 
     assert eos.acentric_factor == omega
 
@@ -65,7 +65,7 @@ def test_peng_robinson_eos():
     pc = 4e6       # Critical pressure [Pa]
     tc = 190.6     # Critical temperature [K]
     omega = 0.008  # Acentric factor
-    eos = PengRobinsonEos(pc, tc, omega)
+    eos = create_eos('PR', pc, tc, omega=omega)
 
     assert eos.acentric_factor == omega
 
