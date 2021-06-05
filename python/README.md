@@ -18,12 +18,14 @@ The EoS classes have the following methods:
 
 `create_state` function creates a state which is an instance of `IsobaricIsothermalState`. This state can be passed to `zfactors`, `ln_fugacity_coeff`, and `fugacity_coeff`.
 
+You can create an EoS by using `create_eos` function.
+
 # Examples
 
 Let us assume the following code is already run.
 
 ```python
-import eos
+from eos import create_eos
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -38,7 +40,7 @@ Then, Z-factors and fugacity coefficients at a given pressure and temperature ca
 
 ```python
 # Van der Waals EoS
-vdw_eos = eos.VanDerWaalsEOS(pc, tc)
+vdw_eos = create_eos('VDW', pc, tc)
 # Creates a state
 state = vdw_eos.create_state(p=3.0e6, t=180.0)
 # Computes Z-factors
@@ -51,7 +53,7 @@ Pressure-volume plot at constant temperature can be created in the following man
 
 ```python
 # Peng-Robinson EoS
-pr_eos = eos.PengRobinsonEOS(pc, tc, omega)
+pr_eos = create_eos('PR', pc, tc, omega=omega)
 # Volume
 v = np.logspace(-4.3, -2, 1000)
 # Temperature
