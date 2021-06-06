@@ -1,3 +1,3 @@
 # eos
 
-This repository provides C++, python, and MATLAB packages for cubic equation of states (EoSs). Currently, only EoSs for pure component for python are provided.
+This repository provides C++, python, and MATLAB packages for cubic equation of states (EoSs). Currently, python and C++ packages are provided.
