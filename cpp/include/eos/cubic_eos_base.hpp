@@ -3,6 +3,7 @@
 
 #include <eos/cubic_eos_state.hpp>
 #include <eos/cubic_eos_traits.hpp>
+#include <eos/isothermal_line.hpp>
 #include <eos/thermodynamic_constants.hpp>
 
 namespace eos {
@@ -89,6 +90,14 @@ class CubicEosBase {
     const auto tr = this->reduced_temperature(t);
     const auto a = this->derived().correction_factor(tr) * a_;
     return Derived::pressure_impl(t, v, a, b_);
+  }
+
+  /// @brief Creates an isothermal line
+  /// @param[in] t Temperature
+  IsothermalLine<Derived> create_line(const Scalar& t) const noexcept {
+    const auto tr = this->reduced_temperature(t);
+    const auto a = this->derived().correction_factor(tr) * a_;
+    return {t, a, b_};
   }
 
   /// @brief Creates isobaric-isothermal state

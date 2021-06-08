@@ -43,6 +43,11 @@ TEST(CubicEosTest, VanDerWaalsEosTest) {
   EXPECT_NEAR(eos.pressure(t, 0.001), 1.309708e6, 1.0);
   EXPECT_NEAR(eos.pressure(t, 0.01), 1.477564e5, 0.1);
   EXPECT_NEAR(eos.pressure(t, 0.1), 1.494696e4, 0.01);
+
+  const auto line = eos.create_line(t);
+  EXPECT_NEAR(line.pressure(0.001), 1.309708e6, 1.0);
+  EXPECT_NEAR(line.pressure(0.01), 1.477564e5, 0.1);
+  EXPECT_NEAR(line.pressure(0.1), 1.494696e4, 0.01);
 }
 
 TEST(CubicEosTest, SoaveRedlichKwongEosTest) {
@@ -72,6 +77,11 @@ TEST(CubicEosTest, SoaveRedlichKwongEosTest) {
   EXPECT_NEAR(eos.pressure(t, 0.001), 1.283055e6, 1.0);
   EXPECT_NEAR(eos.pressure(t, 0.01), 1.474262e5, 0.1);
   EXPECT_NEAR(eos.pressure(t, 0.1), 1.494359e4, 0.01);
+
+  const auto line = eos.create_line(t);
+  EXPECT_NEAR(line.pressure(0.001), 1.283055e6, 1.0);
+  EXPECT_NEAR(line.pressure(0.01), 1.474262e5, 0.1);
+  EXPECT_NEAR(line.pressure(0.1), 1.494359e4, 0.01);
 }
 
 TEST(CubicEosTest, PengRobinsonEosTest) {
@@ -100,4 +110,9 @@ TEST(CubicEosTest, PengRobinsonEosTest) {
   EXPECT_NEAR(eos.pressure(t, 0.001), 1.267541e6, 1.0);
   EXPECT_NEAR(eos.pressure(t, 0.01), 1.472064e5, 0.1);
   EXPECT_NEAR(eos.pressure(t, 0.1), 1.494132e4, 0.01);
+
+  const auto line = eos.create_line(t);
+  EXPECT_NEAR(line.pressure(0.001), 1.267541e6, 1.0);
+  EXPECT_NEAR(line.pressure(0.01), 1.472064e5, 0.1);
+  EXPECT_NEAR(line.pressure(0.1), 1.494132e4, 0.01);
 }
