@@ -65,8 +65,9 @@ std::vector<double> v(n); // Array of volumes [m3]
 // ... Initialize the array of volumes here ...
 
 // Computes pressure along an isothermal line
+const auto line = eos.create_line(t);
 std::vector<double> p(n); // Array of pressures [Pa]
 for (std::size_t i = 0; i < n; ++i) {
-  p[i] = eos.pressure(t, v[i])
+  p[i] = line.pressure(v[i]);
 }
 ```
