@@ -86,7 +86,7 @@ classdef PengRobinsonEos < eos.CubicEosBase
             a = obj.AttractionParam;
             b = obj.RepulsionParam;
             R = eos.ThermodynamicConstants.Gas;
-            P = R*T./(V - b) - alpha*a./((V - b).*(V + b) + 2*B*V);
+            P = R*T./(V - b) - alpha*a./((V - b).*(V + b) + 2*b*V);
         end
         function [z,A,B] = zFactors(obj,P,T)
             % Computes Z-factors
