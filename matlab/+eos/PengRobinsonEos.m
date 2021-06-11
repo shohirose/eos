@@ -1,7 +1,4 @@
-import CubicEosBase
-import ThermodynamicConstants.Gas
-
-classdef PengRobinsonEos < CubicEosBase
+classdef PengRobinsonEos < eos.CubicEosBase
     properties (Constant)
         Sqrt2 = sqrt(2)
         Delta1 = 1 + sqrt(2)
@@ -11,12 +8,12 @@ classdef PengRobinsonEos < CubicEosBase
         AcentricFactor
     end
     methods
-        function obj = PengRobinsonEos(obj,Pc,Tc,omega)
+        function obj = PengRobinsonEos(Pc,Tc,omega)
             % Pc : Critical pressure
             % Tc : Critical temperature
             % omega : Acentric factor
-            obj@CubicEosBase(0.45724,0.07780,Pc,Tc)
-            obj.AcentricFactor = omega
+            obj@eos.CubicEosBase(0.45724,0.07780,Pc,Tc);
+            obj.AcentricFactor = omega;
         end
     end
     methods (Static)
@@ -24,7 +21,7 @@ classdef PengRobinsonEos < CubicEosBase
             % Computes coefficients of Z-factor cubic equation
             % A : Reduced attraction parameter
             % B : Reduced repulsion parameter
-            coeffs = [1, B - 1, A - 2*B - 3*B^2, -A*B + B^2 + B^3]
+            coeffs = [1, B - 1, A - 2*B - 3*B^2, -A*B + B^2 + B^3];
         end
         function lnPhi = lnFugacityCoeff(z,A,B)
             % Computes natural log of fugacity coefficients
@@ -38,7 +35,10 @@ classdef PengRobinsonEos < CubicEosBase
             % Returns
             % -------
             % lnPhi : Natural log of fugacity coefficients
-            lnPhi = z - 1 - log(z - B) - A./(2*Sqrt2*B).*log((z + Delta1*B)./(z + Delta2*B))
+            Sqrt2 = eos.PengRobinsonEos.Sqrt2;
+            Delta1 = eos.PengRobinsonEos.Delta1;
+            Delta2 = eos.PengRobinsonEos.Delta2;
+            lnPhi = z - 1 - log(z - B) - A./(2*Sqrt2*B).*log((z + Delta1*B)./(z + Delta2*B));
         end
         function phi = fugacityCoeff(z,A,B)
             % Computes fugacity coefficients
@@ -52,7 +52,7 @@ classdef PengRobinsonEos < CubicEosBase
             % Returns
             % -------
             % phi : Fugacity coefficients
-            phi = exp(lnFugacityCoeff(z,A,B))
+            phi = exp(eos.PengRobinsonEos.lnFugacityCoeff(z,A,B));
         end
     end
     methods
@@ -66,8 +66,9 @@ classdef PengRobinsonEos < CubicEosBase
             % Returns
             % -------
             % alpha : Temperature correction factor
-            m = 0.3796 + 1.485*obj.omega - 0.1644*obj.omega^2 + 0.01667*obj.omega^2
-            alpha = (1 + m*(1 - sqrt(Tr)))^2
+            omega = obj.AcentricFactor;
+            m = 0.3796 + 1.485*omega - 0.1644*omega^2 + 0.01667*omega^3;
+            alpha = (1 + m*(1 - sqrt(Tr)))^2;
         end
         function P = pressure(obj,T,V)
             % Computes pressure
@@ -80,11 +81,12 @@ classdef PengRobinsonEos < CubicEosBase
             % Returns
             % -------
             % P : Pressure
-            Tr = obj.reducedTemperature(T)
-            alpha = obj.temperatureCorrectionFactor(Tr)
-            a = obj.attractionParam
-            b = obj.repulsionParam
-            P = Gas*T./(V - b) - alpha*a./((V - b).*(V + b) + 2*B*V)
+            Tr = obj.reducedTemperature(T);
+            alpha = obj.temperatureCorrectionFactor(Tr);
+            a = obj.AttractionParam;
+            b = obj.RepulsionParam;
+            R = eos.ThermodynamicConstants.Gas;
+            P = R*T./(V - b) - alpha*a./((V - b).*(V + b) + 2*B*V);
         end
         function [z,A,B] = zFactors(obj,P,T)
             % Computes Z-factors
@@ -99,13 +101,13 @@ classdef PengRobinsonEos < CubicEosBase
             % z : Z-factors
             % A : Reduced attraction parameter
             % B : Reduced repulsion parameter
-            Pr = obj.reducedPressure(P)
-            Tr = obj.reducedTemperature(T)
-            alpha = obj.temperatureCorrectionFactor(Tr)
-            A = obj.reducedAttractionParam(Pr,Tr,alpha)
-            B = obj.reducedRepulsionParam(Pr,Tr)
-            x = roots(zFactorCubicEq(A,B))
-            z = x(imag(x) == 0)
+            Pr = obj.reducedPressure(P);
+            Tr = obj.reducedTemperature(T);
+            alpha = obj.temperatureCorrectionFactor(Tr);
+            A = obj.reducedAttractionParam(Pr,Tr,alpha);
+            B = obj.reducedRepulsionParam(Pr,Tr);
+            x = roots(eos.PengRobinsonEos.zFactorCubicEq(A,B));
+            z = x(imag(x) == 0);
         end
     end
 end
