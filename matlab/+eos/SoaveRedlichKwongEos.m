@@ -1,5 +1,5 @@
 classdef SoaveRedlichKwongEos < eos.CubicEosBase
-    properties
+    properties (SetAccess = private)
         AcentricFactor
     end
     methods
@@ -48,6 +48,10 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
         end
     end
     methods
+        function obj = setCriticalProperties(obj,Pc,Tc,omega)
+            obj = setCriticalProperties@eos.CubicEosBase(obj,Pc,Tc);
+            obj.AcentricFactor = omega;
+        end
         function alpha = temperatureCorrectionFactor(obj,Tr)
             % Computes temperature correction factor for attraction parameter
             %
