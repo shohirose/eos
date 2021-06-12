@@ -1,9 +1,21 @@
 classdef VanDerWaalsEos < eos.CubicEosBase
+    % VanDerWaalsEos Van der Waals equation of state
+    %
+    %  This class provides methods to calculate thermodynamic properties
+    %  based on Van der Waals equation of state.
+    
     methods (Static)
         function coeffs = zFactorCubicEq(A,B)
             % Computes coefficients of Z-factor cubic equation
+            %
+            % Parameters
+            % ----------
             % A : Reduced attraction parameter
             % B : Reduced repulsion parameter
+            %
+            % Returns
+            % -------
+            % coeffs : Coefficients of the cubic equation of Z-factor
             coeffs = [1, -B - 1, A, -A*B];
         end
         function lnPhi = lnFugacityCoeff(z,A,B)
@@ -37,6 +49,10 @@ classdef VanDerWaalsEos < eos.CubicEosBase
     end
     methods
         function obj = VanDerWaalsEos(Pc,Tc)
+            % Constructs VDW EOS
+            %
+            % Parameters
+            % ----------
             % Pc : Critical pressure
             % Tc : Critical temperature
             obj@eos.CubicEosBase(0.421875,0.125,Pc,Tc);

@@ -1,17 +1,29 @@
 classdef PengRobinsonEos < eos.CubicEosBase
-    properties (Constant)
+    % PengRobinsonEos Peng-Robinson equation of state
+    %
+    %  This class provides methods to calculate thermodynamic properties
+    %  based on Peng-Robinson equation of state.
+    
+    properties (Constant, Access = private)
         Sqrt2 = sqrt(2)
         Delta1 = 1 + sqrt(2)
         Delta2 = 1 - sqrt(2)
     end
-    properties
-        AcentricFactor
+    properties (SetAccess = private)
+        AcentricFactor % Acentric factor
     end
     methods (Static)
         function coeffs = zFactorCubicEq(A,B)
             % Computes coefficients of Z-factor cubic equation
+            %
+            % Parameters
+            % ----------
             % A : Reduced attraction parameter
             % B : Reduced repulsion parameter
+            %
+            % Returns
+            % -------
+            % coeffs : Coefficients of the cubic equation of Z-factor
             coeffs = [1, B - 1, A - 2*B - 3*B^2, -A*B + B^2 + B^3];
         end
         function lnPhi = lnFugacityCoeff(z,A,B)
@@ -48,6 +60,10 @@ classdef PengRobinsonEos < eos.CubicEosBase
     end
     methods
         function obj = PengRobinsonEos(Pc,Tc,omega)
+            % Constructs PR EOS
+            %
+            % Parameters
+            % ----------
             % Pc : Critical pressure
             % Tc : Critical temperature
             % omega : Acentric factor

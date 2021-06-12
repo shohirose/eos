@@ -1,12 +1,24 @@
 classdef SoaveRedlichKwongEos < eos.CubicEosBase
+    % SoaveRedlichKwongEos Soave-Redlich-Kwong equation of state
+    %
+    %  This class provides methods to calculate thermodynamic properties
+    %  based on Soave-Redlich-Kwong equation of state.
+    
     properties (SetAccess = private)
-        AcentricFactor
+        AcentricFactor % Acentric factor
     end
     methods (Static)
         function coeffs = zFactorCubicEq(A,B)
             % Computes coefficients of Z-factor cubic equation
+            %
+            % Parameters
+            % ----------
             % A : Reduced attraction parameter
             % B : Reduced repulsion parameter
+            %
+            % Returns
+            % -------
+            % coeffs : Coefficients of the cubic equation of Z-factor
             coeffs = [1, -1, A - B - B^2, -A*B];
         end
         function lnPhi = lnFugacityCoeff(z,A,B)
@@ -40,6 +52,10 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
     end
     methods
         function obj = SoaveRedlichKwongEos(Pc,Tc,omega)
+            % Constructs SRK EOS
+            %
+            % Parameters
+            % ----------
             % Pc : Critical pressure
             % Tc : Critical temperature
             % omega : Acentric factor
@@ -54,6 +70,10 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
             % Pc : Critical pressure
             % Tc : Critical temperature
             % omega : Acentric factor
+            %
+            % Returns
+            % -------
+            % obj : SoaveRedlichKwongEos
             obj = setCriticalProperties@eos.CubicEosBase(obj,Pc,Tc);
             obj.AcentricFactor = omega;
         end
