@@ -136,5 +136,28 @@ classdef PengRobinsonEos < eos.CubicEosBase
             x = roots(eos.PengRobinsonEos.zFactorCubicEq(A,B));
             z = x(imag(x) == 0);
         end
+        function P = tripleRootPressureRange(obj,T)
+            % Computes pressure range with triple roots of Z-factors at a
+            % given temperature
+            %
+            % Parameters
+            % ----------
+            % T : Temperature [K]
+            %
+            % Returns
+            % -------
+            % P : Pressures [Pa]
+            if T >= obj.CriticalTemperature
+                error("Error. \nTemperature %f must be greater than critical temperature %f.", T, obj.CriticalTemperature);
+            end
+            a = obj.AttractionParam;
+            b = obj.RepulsionParam;
+            R = eos.ThermodynamicConstants.Gas;
+            x = roots([R*T, 2*(2*b*R*T - a), 2*((2*b - 1)*b*R*T + a*b), 2*b^2*(a - 2*R*T), b^2*(R*T - a*b)]);
+            V = x(imag(x) == 0);
+            V = V(V > b);
+            V = sort(V);
+            P = obj.pressure(T,V);
+        end
     end
 end
