@@ -82,7 +82,7 @@ classdef VanDerWaalsEos < eos.CubicEosBase
             R = eos.ThermodynamicConstants.Gas;
             a = obj.AttractionParam;
             b = obj.RepulsionParam;
-            P = R*T./(V - b) - a./V^2;
+            P = R*T./(V - b) - a./V.^2;
         end
         function [z,A,B] = zFactors(obj,P,T)
             % Computes Z-factors
