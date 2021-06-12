@@ -5,8 +5,9 @@ classdef CubicEosBase
     %  state.
     
     properties (SetAccess = private)
-        CriticalPressure    % Critical pressure
-        CriticalTemperature % Critical temperature
+        CriticalPressure    % Critical pressure [Pa]
+        CriticalTemperature % Critical temperature [K]
+        MolecularWeight     % Molecular weight [g/mol]
         OmegaA              % Coefficient for attraction parameter
         OmegaB              % Coefficient for repulsion parameter
         AttractionParam     % Attraction parameter
@@ -18,13 +19,13 @@ classdef CubicEosBase
             %
             % Parameters
             % ----------
-            % P : Pressure
-            % T : Temperature
+            % P : Pressure [Pa]
+            % T : Temperature [K]
             % z : Z-factor
             %
             % Returns
             % -------
-            % rho : Molar density
+            % rho : Molar density [mol/m3]
             R = eos.ThermodynamicConstants.Gas;
             rho = P/(z*R*T);
         end
@@ -33,13 +34,13 @@ classdef CubicEosBase
             %
             % Parameters
             % ----------
-            % P : Pressure
-            % T : Temperature
+            % P : Pressure [Pa]
+            % T : Temperature [K]
             % z : Z-factor
             %
             % Returns
             % -------
-            % vm : Molar volume
+            % vm : Molar volume [m3/mol]
             R = eos.ThermodynamicConstants.Gas;
             vm = z*R*T/P;
         end
@@ -84,7 +85,7 @@ classdef CubicEosBase
             %
             % Parameters
             % ----------
-            % P : Pressure
+            % P : Pressure [Pa]
             %
             % Returns
             % -------
@@ -96,7 +97,7 @@ classdef CubicEosBase
             %
             % Parameters
             % ----------
-            % T : Temperature
+            % T : Temperature [K]
             %
             % Returns
             % -------
