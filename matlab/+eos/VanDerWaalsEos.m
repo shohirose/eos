@@ -48,26 +48,37 @@ classdef VanDerWaalsEos < eos.CubicEosBase
         end
     end
     methods
-        function obj = VanDerWaalsEos(Pc,Tc)
+        function obj = VanDerWaalsEos(Pc,Tc,Mw)
             % Constructs VDW EOS
             %
             % Parameters
             % ----------
-            % Pc : Critical pressure
-            % Tc : Critical temperature
-            obj@eos.CubicEosBase(0.421875,0.125,Pc,Tc);
+            % Pc : Critical pressure [Pa]
+            % Tc : Critical temperature [K]
+            % Mw : Molecular weight [g/mol]
+            obj@eos.CubicEosBase(0.421875,0.125,Pc,Tc,Mw);
+        end
+        function obj = setParams(obj,Pc,Tc,Mw)
+            % Set parameters
+            %
+            % Parameters
+            % ----------
+            % Pc : Critical pressure [Pa]
+            % Tc : Critical temperature [K]
+            % Mw : Molecular weight [g/mol]
+            obj = setParams@eos.CubicEosBase(obj,Pc,Tc,Mw);
         end
         function P = pressure(obj,T,V)
             % Computes pressure
             %
             % Parameters
             % ----------
-            % T : Temperature
-            % V : Volume
+            % T : Temperature [K]
+            % V : Volume [m3]
             %
             % Returns
             % -------
-            % P : Pressure
+            % P : Pressure [Pa]
             R = eos.ThermodynamicConstants.Gas;
             a = obj.AttractionParam;
             b = obj.RepulsionParam;
@@ -78,8 +89,8 @@ classdef VanDerWaalsEos < eos.CubicEosBase
             %
             % Parameters
             % ----------
-            % P : Pressure
-            % T : Temperature
+            % P : Pressure [Pa]
+            % T : Temperature [K]
             %
             % Returns
             % -------

@@ -51,30 +51,32 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
         end
     end
     methods
-        function obj = SoaveRedlichKwongEos(Pc,Tc,omega)
+        function obj = SoaveRedlichKwongEos(Pc,Tc,omega,Mw)
             % Constructs SRK EOS
             %
             % Parameters
             % ----------
-            % Pc : Critical pressure
-            % Tc : Critical temperature
+            % Pc : Critical pressure [Pa]
+            % Tc : Critical temperature [K]
             % omega : Acentric factor
-            obj@eos.CubicEosBase(0.42748,0.08664,Pc,Tc)
+            % Mw : Molecular weight [g/mol]
+            obj@eos.CubicEosBase(0.42748,0.08664,Pc,Tc,Mw)
             obj.AcentricFactor = omega;
         end
-        function obj = setCriticalProperties(obj,Pc,Tc,omega)
-            % Set critical properties
+        function obj = setParams(obj,Pc,Tc,omega,Mw)
+            % Set parameters
             %
             % Parameters
             % ----------
-            % Pc : Critical pressure
-            % Tc : Critical temperature
+            % Pc : Critical pressure [Pa]
+            % Tc : Critical temperature [K]
             % omega : Acentric factor
+            % Mw : Molecular weight [g/mol]
             %
             % Returns
             % -------
             % obj : SoaveRedlichKwongEos
-            obj = setCriticalProperties@eos.CubicEosBase(obj,Pc,Tc);
+            obj = setParams@eos.CubicEosBase(obj,Pc,Tc,Mw);
             obj.AcentricFactor = omega;
         end
         function alpha = temperatureCorrectionFactor(obj,Tr)
@@ -96,12 +98,12 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
             %
             % Parameters
             % ----------
-            % T : Temperature
-            % V : Volume
+            % T : Temperature [K]
+            % V : Volume [m3]
             %
             % Returns
             % -------
-            % P : Pressure
+            % P : Pressure [Pa]
             Tr = obj.reducedTemperature(T);
             alpha = obj.temperatureCorrectionFactor(Tr);
             a = obj.AttractionParam;
@@ -114,8 +116,8 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
             %
             % Parameters
             % ----------
-            % P : Pressure
-            % T : Temperature
+            % P : Pressure [Pa]
+            % T : Temperature [K]
             %
             % Returns
             % -------
