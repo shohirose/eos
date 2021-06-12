@@ -27,7 +27,7 @@ classdef CubicEosBase
             % -------
             % rho : Molar density [mol/m3]
             R = eos.ThermodynamicConstants.Gas;
-            rho = P/(z*R*T);
+            rho = P./(z*R.*T);
         end
         function vm = molarVolume(P,T,z)
             % Calculates molar volume
@@ -42,7 +42,7 @@ classdef CubicEosBase
             % -------
             % vm : Molar volume [m3/mol]
             R = eos.ThermodynamicConstants.Gas;
-            vm = z*R*T/P;
+            vm = z*R.*T./P;
         end
     end
     methods
@@ -117,7 +117,7 @@ classdef CubicEosBase
             % -------
             % rho : Mass density [kg/m3]
             R = eos.ThermodynamicConstants.Gas;
-            rho = P*obj.MolecularWeight*1e-3/(z*R*T);
+            rho = P*obj.MolecularWeight*1e-3./(z*R.*T);
         end
         function A = reducedAttractionParam(obj,Pr,Tr,alpha)
             % Computes reduced attraction parameter
