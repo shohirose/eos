@@ -45,32 +45,36 @@ classdef CubicEosBase
         end
     end
     methods
-        function obj = CubicEosBase(OmegaA,OmegaB,Pc,Tc)
+        function obj = CubicEosBase(OmegaA,OmegaB,Pc,Tc,Mw)
             % Constructs cubic EOS
             %
             % Parameters
             % ----------
             % OmegaA : Coefficient for attraction parameter
             % OmegaB : Coefficient for repulsion parameter
-            % Pc : Critical pressure
-            % Tc : Critical temperature
+            % Pc : Critical pressure [Pa]
+            % Tc : Critical temperature [K]
+            % Mw : Molecular weight [g/mol]
             obj.OmegaA = OmegaA;
             obj.OmegaB = OmegaB;
             obj.CriticalPressure = Pc;
             obj.CriticalTemperature = Tc;
+            obj.MolecularWeight = Mw;
             R = eos.ThermodynamicConstants.Gas;
             obj.AttractionParam = OmegaA*(R*Tc)^2/Pc;
             obj.RepulsionParam = OmegaB*R*Tc/Pc;
         end
-        function obj = setCriticalProperties(obj,Pc,Tc)
+        function obj = setParams(obj,Pc,Tc,Mw)
             % Set critical pressure and temperature
             %
             % Parameters
             % ----------
-            % Pc : Critical pressure
-            % Tc : Critical temperature
+            % Pc : Critical pressure [Pa]
+            % Tc : Critical temperature [K]
+            % Mw : Molecular weight [g/mol]
             obj.CriticalPressure = Pc;
             obj.CriticalTemperature = Tc;
+            obj.MolecularWeight = Mw;
             R = eos.ThermodynamicConstants.Gas;
             obj.AttractionParam = obj.OmegaA*(R*Tc)^2/Pc;
             obj.RepulsionParam = obj.OmegaB*R*Tc/Pc;
@@ -98,6 +102,21 @@ classdef CubicEosBase
             % -------
             % Tr : Reduced temperature
             Tr = T/obj.CriticalTemperature;
+        end
+        function rho = massDensity(obj,P,T,z)
+            % Calculates mass density
+            %
+            % Parameters
+            % ----------
+            % P : Pressure [Pa]
+            % T : Temperature [K]
+            % z : Z-factor
+            %
+            % Returns
+            % -------
+            % rho : Mass density [kg/m3]
+            R = eos.ThermodynamicConstants.Gas;
+            rho = P*obj.MolecularWeight*1e-3/(z*R*T);
         end
         function A = reducedAttractionParam(obj,Pr,Tr,alpha)
             % Computes reduced attraction parameter
