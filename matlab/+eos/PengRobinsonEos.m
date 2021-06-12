@@ -7,15 +7,6 @@ classdef PengRobinsonEos < eos.CubicEosBase
     properties
         AcentricFactor
     end
-    methods
-        function obj = PengRobinsonEos(Pc,Tc,omega)
-            % Pc : Critical pressure
-            % Tc : Critical temperature
-            % omega : Acentric factor
-            obj@eos.CubicEosBase(0.45724,0.07780,Pc,Tc);
-            obj.AcentricFactor = omega;
-        end
-    end
     methods (Static)
         function coeffs = zFactorCubicEq(A,B)
             % Computes coefficients of Z-factor cubic equation
@@ -56,7 +47,21 @@ classdef PengRobinsonEos < eos.CubicEosBase
         end
     end
     methods
+        function obj = PengRobinsonEos(Pc,Tc,omega)
+            % Pc : Critical pressure
+            % Tc : Critical temperature
+            % omega : Acentric factor
+            obj@eos.CubicEosBase(0.45724,0.07780,Pc,Tc);
+            obj.AcentricFactor = omega;
+        end
         function obj = setCriticalProperties(obj,Pc,Tc,omega)
+            % Set critical properties
+            %
+            % Parameters
+            % ----------
+            % Pc : Critical pressure
+            % Tc : Critical temperature
+            % omega : Acentric factor
             obj = setCriticalProperties@eos.CubicEosBase(obj,Pc,Tc);
             obj.AcentricFactor = omega;
         end

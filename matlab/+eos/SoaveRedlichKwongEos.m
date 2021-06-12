@@ -2,15 +2,6 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
     properties (SetAccess = private)
         AcentricFactor
     end
-    methods
-        function obj = SoaveRedlichKwongEos(Pc,Tc,omega)
-            % Pc : Critical pressure
-            % Tc : Critical temperature
-            % omega : Acentric factor
-            obj@eos.CubicEosBase(0.42748,0.08664,Pc,Tc)
-            obj.AcentricFactor = omega;
-        end
-    end
     methods (Static)
         function coeffs = zFactorCubicEq(A,B)
             % Computes coefficients of Z-factor cubic equation
@@ -48,7 +39,21 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
         end
     end
     methods
+        function obj = SoaveRedlichKwongEos(Pc,Tc,omega)
+            % Pc : Critical pressure
+            % Tc : Critical temperature
+            % omega : Acentric factor
+            obj@eos.CubicEosBase(0.42748,0.08664,Pc,Tc)
+            obj.AcentricFactor = omega;
+        end
         function obj = setCriticalProperties(obj,Pc,Tc,omega)
+            % Set critical properties
+            %
+            % Parameters
+            % ----------
+            % Pc : Critical pressure
+            % Tc : Critical temperature
+            % omega : Acentric factor
             obj = setCriticalProperties@eos.CubicEosBase(obj,Pc,Tc);
             obj.AcentricFactor = omega;
         end
