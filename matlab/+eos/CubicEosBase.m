@@ -66,7 +66,7 @@ classdef CubicEosBase
             obj.RepulsionParam = OmegaB*R*Tc/Pc;
         end
         function obj = setParams(obj,Pc,Tc,Mw)
-            % Set critical pressure and temperature
+            % Set parameters
             %
             % Parameters
             % ----------
