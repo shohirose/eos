@@ -155,7 +155,7 @@ classdef PengRobinsonEos < eos.CubicEosBase
             a = alpha*obj.AttractionParam;
             b = obj.RepulsionParam;
             R = eos.ThermodynamicConstants.Gas;
-            x = roots([R*T, 2*(2*b*R*T - a), 2*((2*b - 1)*b*R*T + a*b), 2*b^2*(a - 2*R*T), b^2*(R*T - a*b)]);
+            x = roots([R*T, 4*b*R*T - 2*a, 2*(b^2*R*T + a*b), 2*b^2*(a - 2*b*R*T), b^3*(b*R*T - 2*a)]);
             V = x(imag(x) == 0);
             V = V(V > b);
             V = sort(V);
