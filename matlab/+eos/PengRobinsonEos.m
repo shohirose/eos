@@ -150,7 +150,9 @@ classdef PengRobinsonEos < eos.CubicEosBase
             if T >= obj.CriticalTemperature
                 error("Error. \nTemperature %f must be greater than critical temperature %f.", T, obj.CriticalTemperature);
             end
-            a = obj.AttractionParam;
+            Tr = obj.reducedTemperature(T);
+            alpha = obj.temperatureCorrectionFactor(Tr);
+            a = alpha*obj.AttractionParam;
             b = obj.RepulsionParam;
             R = eos.ThermodynamicConstants.Gas;
             x = roots([R*T, 2*(2*b*R*T - a), 2*((2*b - 1)*b*R*T + a*b), 2*b^2*(a - 2*R*T), b^2*(R*T - a*b)]);
