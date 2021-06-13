@@ -149,7 +149,7 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
             a = obj.AttractionParam;
             b = obj.RepulsionParam;
             R = eos.ThermodynamicConstants.Gas;
-            x = roots([R*T, 2*(b*R*T - a), b^2*R*T + 3*a*b, 0, b^3]);
+            x = roots([R*T, 2*(b*R*T - a), b^2*R*T + 3*a*b, 0, -a*b^3]);
             V = x(imag(x) == 0);
             V = V(V > b);
             V = sort(V);
