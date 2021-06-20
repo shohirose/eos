@@ -13,38 +13,6 @@ classdef CubicEosBase
         AttractionParam     % Attraction parameter
         RepulsionParam      % Repulsion parameter
     end
-    methods (Static)
-        function rho = molarDensity(P,T,z)
-            % Calculates molar density
-            %
-            % Parameters
-            % ----------
-            % P : Pressure [Pa]
-            % T : Temperature [K]
-            % z : Z-factor
-            %
-            % Returns
-            % -------
-            % rho : Molar density [mol/m3]
-            R = eos.ThermodynamicConstants.Gas;
-            rho = P./(z*R.*T);
-        end
-        function vm = molarVolume(P,T,z)
-            % Calculates molar volume
-            %
-            % Parameters
-            % ----------
-            % P : Pressure [Pa]
-            % T : Temperature [K]
-            % z : Z-factor
-            %
-            % Returns
-            % -------
-            % vm : Molar volume [m3/mol]
-            R = eos.ThermodynamicConstants.Gas;
-            vm = z*R.*T./P;
-        end
-    end
     methods
         function obj = CubicEosBase(OmegaA,OmegaB,Pc,Tc,Mw)
             % Constructs cubic EOS
