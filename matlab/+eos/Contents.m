@@ -6,3 +6,6 @@
 %   SoaveRedlichKwongEos   - Soave-Redlich-Kwong equation of state
 %   ThermodynamicConstants - Class for thermodynamic constants
 %   VanDerWaalsEos         - Van der Waals equation of state
+%   molarVolume            - Calculate molar volume
+%   molarDensity           - Calculate molar density
+%   massDensity            - Calculate mass density
