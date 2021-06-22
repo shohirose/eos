@@ -197,7 +197,8 @@ classdef CubicEosBase
             % s : struct containing parameters
             Pr = obj.reducedPressure(P);
             Tr = obj.reducedTemperature(T);
-            Ai = obj.reducedAttractionParam(Pr,Tr,1);
+            alpha = obj.temperatureCorrectionFactor(Tr);
+            Ai = obj.reducedAttractionParam(Pr,Tr,alpha);
             Bi = obj.reducedRepulsionParam(Pr,Tr);
             [A,B,Aij] = obj.applyMixingRule(x,Ai,Bi);
             y = roots(obj.zFactorCubicEq(A,B));
