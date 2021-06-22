@@ -1,12 +1,12 @@
 %% Example of VanDerWaalsEos class
-import eos.VanDerWaalsEos
+import eos.purecomp.VanDerWaalsEos
 
 %% Create an instance of VDW EOS class
 % Methane
 Pc = 4e6;       % Critical pressure [Pa]
 Tc = 190.6;     % Critical temperature [K]
 Mw = 16.0425;   % Molecular weight [g/mol]
-vdw = eos.VanDerWaalsEos(Pc,Tc,Mw);
+vdw = VanDerWaalsEos(Pc,Tc,Mw);
 
 %% Plot isothermal lines
 b = vdw.RepulsionParam;
@@ -27,10 +27,6 @@ ylabel('Pressure [Pa]');
 P = 3e6;
 T = 180;
 % Computes Z-factors
-[z,A,B] = vdw.zFactors(P,T);
+[z,s] = vdw.zFactors(P,T);
 % Computes fugacity coefficients
-phi = vdw.fugacityCoeff(z,A,B);
-% Computes density and volume
-rhom = vdw.molarDensity(P,T,z);
-rhow = vdw.massDensity(P,T,z);
-vm = vdw.molarVolume(P,T,z);
+phi = vdw.fugacityCoeff(z,s);
