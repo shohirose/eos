@@ -10,11 +10,11 @@ Please copy this folder wherever you want in your computer, and add the path to 
 > # Add the path to the package folder
 > addpath('path-to-the-folder-containing-eos-package')
 > # Then you can import anything in the package.
-> import eos.purecomp.VanDerWaals
+> import eos.purecomp.VanDerWaalsEos
 > Pc = 4.6e6;
 > Tc = 190.6;
 > Mw = 16.0425;
-> eos = VanDerWaals(Pc,Tc,Mw);
+> eos = VanDerWaalsEos(Pc,Tc,Mw);
 ```
 
 # Examples
