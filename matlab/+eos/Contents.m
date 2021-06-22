@@ -1,11 +1,11 @@
 % +EOS
 %
+% Packages
+%   multicomp  - Cubic EoS for multi-component systems
+%   purecomp   - Cubic EoS for pure-component systems
+%
 % Files
-%   CubicEosBase           - Base class for two-parameter cubic equation of state.
-%   PengRobinsonEos        - Peng-Robinson equation of state
-%   SoaveRedlichKwongEos   - Soave-Redlich-Kwong equation of state
 %   ThermodynamicConstants - Class for thermodynamic constants
-%   VanDerWaalsEos         - Van der Waals equation of state
 %   molarVolume            - Calculate molar volume
 %   molarDensity           - Calculate molar density
 %   massDensity            - Calculate mass density
