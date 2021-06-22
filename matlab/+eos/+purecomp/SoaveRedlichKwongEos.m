@@ -11,6 +11,8 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
         function coeffs = zFactorCubicEq(A,B)
             % Compute coefficients of Z-factor cubic equation
             %
+            % coeffs = ZFACTORCUBICEQ(A,B)
+            %
             % Parameters
             % ----------
             % A : Reduced attraction parameter
@@ -27,6 +29,8 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
         end
         function coeffs = dPdTPolyEq(T,a,b)
             % Compute coefficients of the polynomial of dPdT = 0.
+            %
+            % coeffs = DPDTPOLYEQ(T,a,b)
             %
             % Parameters
             % ----------
@@ -48,6 +52,8 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
         function lnPhi = lnFugacityCoeff(z,s)
             % Compute natural log of fugacity coefficients
             %
+            % lnPhi = LNFUGACITYCOEFF(z,s)
+            %
             % Parameters
             % ----------
             % z : Z-factor
@@ -67,7 +73,9 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
     end
     methods
         function obj = SoaveRedlichKwongEos(Pc,Tc,omega,Mw)
-            % Constructs SRK EOS
+            % Construct SRK EoS
+            %
+            % obj = SOAVEREDLICHKWONGEOS(Pc,Tc,omega,Mw)
             %
             % Parameters
             % ----------
@@ -78,7 +86,7 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
             %
             % Returns
             % -------
-            % obj : SoaveRedlichKwongEos
+            % obj : SOAVEREDLICHKWONGEOS
             arguments
                 Pc (1,1) {mustBeNumeric}
                 Tc (1,1) {mustBeNumeric}
@@ -91,6 +99,8 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
         function obj = setParams(obj,Pc,Tc,omega,Mw)
             % Set parameters
             %
+            % obj = obj.SETPARAMS(Pc,Tc,omega,Mw)
+            %
             % Parameters
             % ----------
             % Pc : Critical pressure [Pa]
@@ -100,7 +110,7 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
             %
             % Returns
             % -------
-            % obj : SoaveRedlichKwongEos
+            % obj : SOAVEREDLICHKWONGEOS
             arguments
                 obj {mustBeA(obj,'eos.purecomp.SoaveRedlichKwongEos')}
                 Pc (1,1) {mustBeNumeric}
@@ -112,7 +122,9 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
             obj.AcentricFactor = omega;
         end
         function alpha = temperatureCorrectionFactor(obj,Tr)
-            % Compute temperature correction factor
+            % Compute temperature correction factor.
+            %
+            % alpha = obj.TEMPERATURECORRECTIONFACTOR(Tr)
             %
             % Parameters
             % ----------
@@ -126,7 +138,9 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
             alpha = (1 + m*(1 - sqrt(Tr))).^2;
         end
         function P = pressure(obj,T,V)
-            % Computes pressure
+            % Compute pressure
+            %
+            % P = obj.PRESSURE(T,V)
             %
             % Parameters
             % ----------

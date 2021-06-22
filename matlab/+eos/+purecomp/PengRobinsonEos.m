@@ -14,7 +14,9 @@ classdef PengRobinsonEos < eos.purecomp.CubicEosBase
     end
     methods (Static)
         function coeffs = zFactorCubicEq(A,B)
-            % Computes coefficients of Z-factor cubic equation
+            % Compute coefficients of Z-factor cubic equation
+            %
+            % coeffs = ZFACTORCUBICEQ(A,B)
             %
             % Parameters
             % ----------
@@ -32,6 +34,8 @@ classdef PengRobinsonEos < eos.purecomp.CubicEosBase
         end
         function coeffs = dPdTPolyEq(T,a,b)
             % Compute coefficients of the polynomial of dPdT = 0.
+            %
+            % coeffs = DPDTPOLYEQ(T,a,b)
             %
             % Parameters
             % ----------
@@ -52,7 +56,9 @@ classdef PengRobinsonEos < eos.purecomp.CubicEosBase
                 2*b^2*(a - 2*b*R*T), b^3*(b*R*T - 2*a)];
         end
         function lnPhi = lnFugacityCoeff(z,s)
-            % Compute the natural log of fugacity coefficients
+            % Compute the natural log of fugacity coefficients.
+            %
+            % lnPhi = LNFUGACITYCOEFFS(z,s)
             %
             % Parameters
             % ----------
@@ -79,6 +85,8 @@ classdef PengRobinsonEos < eos.purecomp.CubicEosBase
         function obj = PengRobinsonEos(Pc,Tc,omega,Mw)
             % Construct PR EoS
             %
+            % obj = PENGROBINSONEOS(Pc,Tc,omega,Mw)
+            %
             % Parameters
             % ----------
             % Pc : Critical pressure [Pa]
@@ -100,6 +108,8 @@ classdef PengRobinsonEos < eos.purecomp.CubicEosBase
         end
         function obj = setParams(obj,Pc,Tc,omega,Mw)
             % Set parameters.
+            %
+            % obj = obj.SETPARAMS(Pc,Tc,omega,Mw)
             %
             % Parameters
             % ----------
@@ -124,6 +134,8 @@ classdef PengRobinsonEos < eos.purecomp.CubicEosBase
         function alpha = temperatureCorrectionFactor(obj,Tr)
             % Compute temperature correction factor.
             %
+            % alpha = obj.TEMPERATURECORRECTIONFACTOR(Tr)
+            %
             % Parameters
             % ----------
             % Tr : Reduced temperature
@@ -140,7 +152,9 @@ classdef PengRobinsonEos < eos.purecomp.CubicEosBase
             alpha = (1 + m*(1 - sqrt(Tr))).^2;
         end
         function P = pressure(obj,T,V)
-            % Computes pressure
+            % Compute pressure
+            %
+            % P = obj.PRESSURE(T,V)
             %
             % Parameters
             % ----------

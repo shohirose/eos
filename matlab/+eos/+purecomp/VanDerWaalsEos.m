@@ -1,12 +1,11 @@
 classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
-    % VanDerWaalsEos Van der Waals equation of state
-    %
-    %  This class provides methods to calculate thermodynamic properties
-    %  based on Van der Waals equation of state.
+    % Van der Waals equation of state.
     
     methods (Static)
         function coeffs = zFactorCubicEq(A,B)
-            % Computes coefficients of Z-factor cubic equation
+            % Compute coefficients of Z-factor cubic equation
+            %
+            % coeffs = ZFACTORCUBICEQ(A,B)
             %
             % Parameters
             % ----------
@@ -24,6 +23,8 @@ classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
         end
         function coeffs = dPdTPolyEq(T,a,b)
             % Compute the coefficients of a polynomial equation of dPdT = 0
+            %
+            % coeffs = DPDTPOLYEQ(T,a,b)
             %
             % Parameters
             % ----------
@@ -43,10 +44,18 @@ classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
             coeffs = [R*T, -2*a, 4*a*b, -2*a*b^2];
         end
         function lnPhi = lnFugacityCoeff(z,s)
+            % Compute the natural log of fugacity coeffcients
+            %
+            % lnPhi = LNGUGACITYCOEFF(z,s)
+            %
             % Parameters
             % ----------
             % z : Z-factors
-            % s : State
+            % s : struct containing parameters
+            %
+            % Returns
+            % -------
+            % lnPhi : Natural log of fugacity coefficients
             arguments
                 z (:,1) {mustBeNumeric}
                 s struct
@@ -58,7 +67,9 @@ classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
     end
     methods
         function obj = VanDerWaalsEos(Pc,Tc,Mw)
-            % Constructs VDW EOS
+            % Construct VDW EoS
+            %
+            % obj = VANDERWAALSEOS(Pc,Tc,Mw)
             %
             % Parameters
             % ----------
@@ -66,6 +77,10 @@ classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
             % Tc : Critical temperature [K]
             % Mw : Molecular weight [g/mol]
             % K  : Binary interaction parameters (optional)
+            %
+            % Returns
+            % -------
+            % obj : VANDERWAALSEOS
             arguments
                Pc (1,1) {mustBeNumeric}
                Tc (1,1) {mustBeNumeric}
@@ -76,15 +91,26 @@ classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
         function obj = setParams(obj,Pc,Tc,Mw)
             % Set parameters
             %
+            % obj = obj.SETPARAMS(Pc,Tc,Mw)
+            %
             % Parameters
             % ----------
             % Pc : Critical pressure [Pa]
             % Tc : Critical temperature [K]
             % Mw : Molecular weight [g/mol]
+            %
+            % Returns
+            % -------
+            % obj : VANDERWAALSEOS
             obj = setParams@eos.purecomp.CubicEosBase(obj,Pc,Tc,Mw);
         end
         function alpha = temperatureCorrectionFactor(~,~)
-            % Computes temperature correction factor for attraction parameter
+            % Compute temperature correction factor
+            %
+            %   This function just returns 1 because VDW EoS does not
+            %   consider temperature dependence of attraction parameter.
+            %
+            % alpha = obj.TEMPERATURECORRECTIONFACTOR(Tr)
             %
             % Parameters
             % ----------
@@ -96,7 +122,9 @@ classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
             alpha = 1;
         end
         function P = pressure(obj,T,V)
-            % Computes pressure
+            % Compute pressure
+            %
+            % P = obj.PRESSURE(T,V)
             %
             % Parameters
             % ----------
@@ -111,53 +139,5 @@ classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
             b = obj.RepulsionParam;
             P = R*T./(V - b) - a./V.^2;
         end
-        %{
-        function [z,s] = zFactors(obj,P,T)
-            % Computes Z-factors
-            %
-            % Parameters
-            % ----------
-            % P : Pressure [Pa]
-            % T : Temperature [K]
-            %
-            % Returns
-            % -------
-            % z : Z-factors
-            % s : State
-            Pr = obj.reducedPressure(P);
-            Tr = obj.reducedTemperature(T);
-            A = obj.reducedAttractionParam(Pr,Tr,1);
-            B = obj.reducedRepulsionParam(Pr,Tr);
-            x = roots(obj.zFactorCubicEq(A,B));
-            z = x(imag(x) == 0);
-            s = struct('A',A,'B',B);
-        end
-        %}
-        %{
-        function P = tripleRootPressureRange(obj,T)
-            % Computes pressure range with triple roots of Z-factors at a
-            % given temperature
-            %
-            % Parameters
-            % ----------
-            % T : Temperature [K]
-            %
-            % Returns
-            % -------
-            % P : Pressures [Pa]
-            if T >= obj.CriticalTemperature
-                error("Error. \nT %f must be less than Tc %f.", ...
-                    T, obj.CriticalTemperature);
-            end
-            a = obj.AttractionParam;
-            b = obj.RepulsionParam;
-            R = eos.ThermodynamicConstants.Gas;
-            x = roots([R*T, -2*a, 4*a*b, -2*a*b^2]);
-            V = x(imag(x) == 0);
-            V = V(V > b);
-            V = sort(V);
-            P = obj.pressure(T,V);
-        end
-        %}
     end
 end
