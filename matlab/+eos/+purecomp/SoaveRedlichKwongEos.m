@@ -1,4 +1,4 @@
-classdef SoaveRedlichKwongEos < eos.CubicEosBase
+classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
     % SoaveRedlichKwongEos Soave-Redlich-Kwong equation of state
     %
     %  This class provides methods to calculate thermodynamic properties
@@ -9,7 +9,7 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
     end
     methods (Static)
         function coeffs = zFactorCubicEq(A,B)
-            % Computes coefficients of Z-factor cubic equation
+            % Compute coefficients of Z-factor cubic equation
             %
             % Parameters
             % ----------
@@ -19,35 +19,50 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
             % Returns
             % -------
             % coeffs : Coefficients of the cubic equation of Z-factor
+            arguments
+                A (1,1) {mustBeNumeric}
+                B (1,1) {mustBeNumeric}
+            end
             coeffs = [1, -1, A - B - B^2, -A*B];
         end
-        function lnPhi = lnFugacityCoeff(z,A,B)
-            % Computes natural log of fugacity coefficients
+        function coeffs = dPdTPolyEq(T,a,b)
+            % Compute coefficients of the polynomial of dPdT = 0.
+            %
+            % Parameters
+            % ----------
+            % T : Temperature [K]
+            % a : Attraction parameter
+            % b : Repulsion parameter
+            %
+            % Returns
+            % -------
+            % coeffs : Coefficients of the polynomial of dPdT = 0.
+            arguments
+                T (1,1) {mustBeNumeric}
+                a (1,1) {mustBeNumeric}
+                b (1,1) {mustBeNumeric}
+            end
+            R = eos.ThermodynamicConstants.Gas;
+            coeffs = [R*T, 2*(b*R*T - a), b^2*R*T + 3*a*b, 0, -a*b^3];
+        end
+        function lnPhi = lnFugacityCoeff(z,s)
+            % Compute natural log of fugacity coefficients
             %
             % Parameters
             % ----------
             % z : Z-factor
-            % A : Reduced attraction parameter
-            % B : Reduced repulsion parameter
+            % s : struct containing parameters
             %
             % Returns
             % -------
             % lnPhi : Natural log of fugacity coefficients
+            arguments
+                z (:,1) {mustBeNumeric}
+                s struct
+            end
+            A = s.A;
+            B = s.B;
             lnPhi = z - 1 - log(z - B) - A/B*log(B./z + 1);
-        end
-        function phi = fugacityCoeff(z,A,B)
-            % Computes fugacity coefficients
-            %
-            % Parameters
-            % ----------
-            % z : Z-factor
-            % A : Reduced attraction parameter
-            % B : Reduced repulsion parameter
-            %
-            % Returns
-            % -------
-            % phi : Fugacity coefficients
-            phi = exp(eos.SoaveRedlichKwongEos.lnFugacityCoeff(z,A,B));
         end
     end
     methods
@@ -60,7 +75,17 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
             % Tc : Critical temperature [K]
             % omega : Acentric factor
             % Mw : Molecular weight [g/mol]
-            obj@eos.CubicEosBase(0.42748,0.08664,Pc,Tc,Mw)
+            %
+            % Returns
+            % -------
+            % obj : SoaveRedlichKwongEos
+            arguments
+                Pc (1,1) {mustBeNumeric}
+                Tc (1,1) {mustBeNumeric}
+                omega (1,1) {mustBeNumeric}
+                Mw (1,1) {mustBeNumeric}
+            end
+            obj@eos.purecomp.CubicEosBase(0.42748,0.08664,Pc,Tc,Mw)
             obj.AcentricFactor = omega;
         end
         function obj = setParams(obj,Pc,Tc,omega,Mw)
@@ -76,11 +101,18 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
             % Returns
             % -------
             % obj : SoaveRedlichKwongEos
-            obj = setParams@eos.CubicEosBase(obj,Pc,Tc,Mw);
+            arguments
+                obj {mustBeA(obj,'eos.purecomp.SoaveRedlichKwongEos')}
+                Pc (1,1) {mustBeNumeric}
+                Tc (1,1) {mustBeNumeric}
+                omega (1,1) {mustBeNumeric}
+                Mw (1,1) {mustBeNumeric}
+            end
+            obj = setParams@eos.purecomp.CubicEosBase(obj,Pc,Tc,Mw);
             obj.AcentricFactor = omega;
         end
         function alpha = temperatureCorrectionFactor(obj,Tr)
-            % Computes temperature correction factor for attraction parameter
+            % Compute temperature correction factor
             %
             % Parameters
             % ----------
@@ -91,7 +123,7 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
             % alpha : Temperature correction factor
             omega = obj.AcentricFactor;
             m = 0.48 + 1.574*omega - 0.176*omega^2;
-            alpha = (1 + m*(1 - sqrt(Tr)))^2;
+            alpha = (1 + m*(1 - sqrt(Tr))).^2;
         end
         function P = pressure(obj,T,V)
             % Computes pressure
@@ -110,52 +142,6 @@ classdef SoaveRedlichKwongEos < eos.CubicEosBase
             b = obj.RepulsionParam;
             R = eos.ThermodynamicConstants.Gas;
             P = R*T./(V - b) - alpha*a./(V.*(V + b));
-        end
-        function [z,A,B] = zFactors(obj,P,T)
-            % Computes Z-factors
-            %
-            % Parameters
-            % ----------
-            % P : Pressure [Pa]
-            % T : Temperature [K]
-            %
-            % Returns
-            % -------
-            % z : Z-factors
-            % A : Reduced attraction parameter
-            % B : Reduced repulsion parameter
-            Pr = obj.reducedPressure(P);
-            Tr = obj.reducedTemperature(T);
-            alpha = obj.temperatureCorrectionFactor(Tr);
-            A = obj.reducedAttractionParam(Pr,Tr,alpha);
-            B = obj.reducedRepulsionParam(Pr,Tr);
-            x = roots(eos.SoaveRedlichKwongEos.zFactorCubicEq(A,B));
-            z = x(imag(x) == 0);
-        end
-        function P = tripleRootPressureRange(obj,T)
-            % Computes pressure range with triple roots of Z-factors at a
-            % given temperature
-            %
-            % Parameters
-            % ----------
-            % T : Temperature [K]
-            %
-            % Returns
-            % -------
-            % P : Pressures [Pa]
-            if T >= obj.CriticalTemperature
-                error("Error. \nTemperature %f must be greater than critical temperature %f.", T, obj.CriticalTemperature);
-            end
-            Tr = obj.reducedTemperature(T);
-            alpha = obj.temperatureCorrectionFactor(Tr);
-            a = alpha*obj.AttractionParam;
-            b = obj.RepulsionParam;
-            R = eos.ThermodynamicConstants.Gas;
-            x = roots([R*T, 2*(b*R*T - a), b^2*R*T + 3*a*b, 0, -a*b^3]);
-            V = x(imag(x) == 0);
-            V = V(V > b);
-            V = sort(V);
-            P = obj.pressure(T,V);
         end
     end
 end

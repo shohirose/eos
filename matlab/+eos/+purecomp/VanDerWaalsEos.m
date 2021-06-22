@@ -1,17 +1,9 @@
-classdef PengRobinsonEos < eos.CubicEosBase
-    % PengRobinsonEos Peng-Robinson equation of state
+classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
+    % VanDerWaalsEos Van der Waals equation of state
     %
     %  This class provides methods to calculate thermodynamic properties
-    %  based on Peng-Robinson equation of state.
+    %  based on Van der Waals equation of state.
     
-    properties (Constant, Access = private)
-        Sqrt2 = sqrt(2)
-        Delta1 = 1 + sqrt(2)
-        Delta2 = 1 - sqrt(2)
-    end
-    properties (SetAccess = private)
-        AcentricFactor % Acentric factor
-    end
     methods (Static)
         function coeffs = zFactorCubicEq(A,B)
             % Computes coefficients of Z-factor cubic equation
@@ -24,66 +16,74 @@ classdef PengRobinsonEos < eos.CubicEosBase
             % Returns
             % -------
             % coeffs : Coefficients of the cubic equation of Z-factor
-            coeffs = [1, B - 1, A - 2*B - 3*B^2, -A*B + B^2 + B^3];
+            arguments
+                A (1,1) {mustBeNumeric}
+                B (1,1) {mustBeNumeric}
+            end
+            coeffs = [1, -B - 1, A, -A*B];
         end
-        function lnPhi = lnFugacityCoeff(z,A,B)
-            % Computes natural log of fugacity coefficients
+        function coeffs = dPdTPolyEq(T,a,b)
+            % Compute the coefficients of a polynomial equation of dPdT = 0
             %
             % Parameters
             % ----------
-            % z : Z-factor
-            % A : Reduced attraction parameter
-            % B : Reduced repulsion parameter
+            % T : Temperature
+            % a : Attraction parameter
+            % b : Repulsion parameter
             %
             % Returns
             % -------
-            % lnPhi : Natural log of fugacity coefficients
-            Sqrt2 = eos.PengRobinsonEos.Sqrt2;
-            Delta1 = eos.PengRobinsonEos.Delta1;
-            Delta2 = eos.PengRobinsonEos.Delta2;
-            lnPhi = z - 1 - log(z - B) - A./(2*Sqrt2*B).*log((z + Delta1*B)./(z + Delta2*B));
+            % coeffs : Coefficients of a polynomial equation
+            arguments
+                T (1,1) {mustBeNumeric}
+                a (1,1) {mustBeNumeric}
+                b (1,1) {mustBeNumeric}
+            end
+            R = eos.ThermodynamicConstants.Gas;
+            coeffs = [R*T, -2*a, 4*a*b, -2*a*b^2];
         end
-        function phi = fugacityCoeff(z,A,B)
-            % Computes fugacity coefficients
-            %
+        function lnPhi = lnFugacityCoeff(z,s)
             % Parameters
             % ----------
-            % z : Z-factor
-            % A : Reduced attraction parameter
-            % B : Reduced repulsion parameter
-            %
-            % Returns
-            % -------
-            % phi : Fugacity coefficients
-            phi = exp(eos.PengRobinsonEos.lnFugacityCoeff(z,A,B));
+            % z : Z-factors
+            % s : State
+            arguments
+                z (:,1) {mustBeNumeric}
+                s struct
+            end
+            A = s.A;
+            B = s.B;
+            lnPhi = z - 1 - log(z - B) - A./z;
         end
     end
     methods
-        function obj = PengRobinsonEos(Pc,Tc,omega,Mw)
-            % Constructs PR EOS
+        function obj = VanDerWaalsEos(Pc,Tc,Mw)
+            % Constructs VDW EOS
             %
             % Parameters
             % ----------
             % Pc : Critical pressure [Pa]
             % Tc : Critical temperature [K]
-            % omega : Acentric factor
             % Mw : Molecular weight [g/mol]
-            obj@eos.CubicEosBase(0.45724,0.07780,Pc,Tc,Mw);
-            obj.AcentricFactor = omega;
+            % K  : Binary interaction parameters (optional)
+            arguments
+               Pc (1,1) {mustBeNumeric}
+               Tc (1,1) {mustBeNumeric}
+               Mw (1,1) {mustBeNumeric}
+            end
+            obj@eos.purecomp.CubicEosBase(0.421875,0.125,Pc,Tc,Mw);
         end
-        function obj = setParams(obj,Pc,Tc,omega,Mw)
+        function obj = setParams(obj,Pc,Tc,Mw)
             % Set parameters
             %
             % Parameters
             % ----------
             % Pc : Critical pressure [Pa]
             % Tc : Critical temperature [K]
-            % omega : Acentric factor
             % Mw : Molecular weight [g/mol]
-            obj = setParams@eos.CubicEosBase(obj,Pc,Tc,Mw);
-            obj.AcentricFactor = omega;
+            obj = setParams@eos.purecomp.CubicEosBase(obj,Pc,Tc,Mw);
         end
-        function alpha = temperatureCorrectionFactor(obj,Tr)
+        function alpha = temperatureCorrectionFactor(~,~)
             % Computes temperature correction factor for attraction parameter
             %
             % Parameters
@@ -93,9 +93,7 @@ classdef PengRobinsonEos < eos.CubicEosBase
             % Returns
             % -------
             % alpha : Temperature correction factor
-            omega = obj.AcentricFactor;
-            m = 0.3796 + 1.485*omega - 0.1644*omega^2 + 0.01667*omega^3;
-            alpha = (1 + m*(1 - sqrt(Tr)))^2;
+            alpha = 1;
         end
         function P = pressure(obj,T,V)
             % Computes pressure
@@ -108,14 +106,13 @@ classdef PengRobinsonEos < eos.CubicEosBase
             % Returns
             % -------
             % P : Pressure [Pa]
-            Tr = obj.reducedTemperature(T);
-            alpha = obj.temperatureCorrectionFactor(Tr);
+            R = eos.ThermodynamicConstants.Gas;
             a = obj.AttractionParam;
             b = obj.RepulsionParam;
-            R = eos.ThermodynamicConstants.Gas;
-            P = R*T./(V - b) - alpha*a./((V - b).*(V + b) + 2*b*V);
+            P = R*T./(V - b) - a./V.^2;
         end
-        function [z,A,B] = zFactors(obj,P,T)
+        %{
+        function [z,s] = zFactors(obj,P,T)
             % Computes Z-factors
             %
             % Parameters
@@ -126,16 +123,17 @@ classdef PengRobinsonEos < eos.CubicEosBase
             % Returns
             % -------
             % z : Z-factors
-            % A : Reduced attraction parameter
-            % B : Reduced repulsion parameter
+            % s : State
             Pr = obj.reducedPressure(P);
             Tr = obj.reducedTemperature(T);
-            alpha = obj.temperatureCorrectionFactor(Tr);
-            A = obj.reducedAttractionParam(Pr,Tr,alpha);
+            A = obj.reducedAttractionParam(Pr,Tr,1);
             B = obj.reducedRepulsionParam(Pr,Tr);
-            x = roots(eos.PengRobinsonEos.zFactorCubicEq(A,B));
+            x = roots(obj.zFactorCubicEq(A,B));
             z = x(imag(x) == 0);
+            s = struct('A',A,'B',B);
         end
+        %}
+        %{
         function P = tripleRootPressureRange(obj,T)
             % Computes pressure range with triple roots of Z-factors at a
             % given temperature
@@ -148,18 +146,18 @@ classdef PengRobinsonEos < eos.CubicEosBase
             % -------
             % P : Pressures [Pa]
             if T >= obj.CriticalTemperature
-                error("Error. \nTemperature %f must be greater than critical temperature %f.", T, obj.CriticalTemperature);
+                error("Error. \nT %f must be less than Tc %f.", ...
+                    T, obj.CriticalTemperature);
             end
-            Tr = obj.reducedTemperature(T);
-            alpha = obj.temperatureCorrectionFactor(Tr);
-            a = alpha*obj.AttractionParam;
+            a = obj.AttractionParam;
             b = obj.RepulsionParam;
             R = eos.ThermodynamicConstants.Gas;
-            x = roots([R*T, 4*b*R*T - 2*a, 2*(b^2*R*T + a*b), 2*b^2*(a - 2*b*R*T), b^3*(b*R*T - 2*a)]);
+            x = roots([R*T, -2*a, 4*a*b, -2*a*b^2]);
             V = x(imag(x) == 0);
             V = V(V > b);
             V = sort(V);
             P = obj.pressure(T,V);
         end
+        %}
     end
 end
