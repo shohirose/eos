@@ -70,6 +70,30 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
             B = s.B;
             lnPhi = z - 1 - log(z - B) - A/B*log(B./z + 1);
         end
+        function P = pressureImpl(T,V,a,b)
+            % Compute pressure.
+            %
+            % P = PRESSUREIMPL(T,V,a,b)
+            %
+            % Parameters
+            % ----------
+            % T : Temperature [K]
+            % V : Volume [m3]
+            % a : Attraction parameter
+            % b : Repulsion parameter
+            %
+            % Returns
+            % -------
+            % P : Pressure [Pa]
+            arguments
+                T {mustBeNumeric}
+                V {mustBeNumeric}
+                a {mustBeNumeric}
+                b {mustBeNumeric}
+            end
+            R = eos.ThermodynamicConstants.Gas;
+            P = R*T./(V - b) - a./(V.*(V + b));
+        end
     end
     methods
         function obj = SoaveRedlichKwongEos(Pc,Tc,omega,Mw)
@@ -136,26 +160,6 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
             omega = obj.AcentricFactor;
             m = 0.48 + 1.574*omega - 0.176*omega^2;
             alpha = (1 + m*(1 - sqrt(Tr))).^2;
-        end
-        function P = pressure(obj,T,V)
-            % Compute pressure
-            %
-            % P = obj.PRESSURE(T,V)
-            %
-            % Parameters
-            % ----------
-            % T : Temperature [K]
-            % V : Volume [m3]
-            %
-            % Returns
-            % -------
-            % P : Pressure [Pa]
-            Tr = obj.reducedTemperature(T);
-            alpha = obj.temperatureCorrectionFactor(Tr);
-            a = obj.AttractionParam;
-            b = obj.RepulsionParam;
-            R = eos.ThermodynamicConstants.Gas;
-            P = R*T./(V - b) - alpha*a./(V.*(V + b));
         end
     end
 end

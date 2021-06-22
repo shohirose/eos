@@ -64,6 +64,30 @@ classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
             B = s.B;
             lnPhi = z - 1 - log(z - B) - A./z;
         end
+        function P = pressureImpl(T,V,a,b)
+            % Compute pressure.
+            %
+            % P = PRESSUREIMPL(T,V,a,b)
+            %
+            % Parameters
+            % ----------
+            % T : Temperature [K]
+            % V : Volume [m3]
+            % a : Attraction parameter
+            % b : Repulsion parameter
+            %
+            % Returns
+            % -------
+            % P : Pressure [Pa]
+            arguments
+                T {mustBeNumeric}
+                V {mustBeNumeric}
+                a {mustBeNumeric}
+                b {mustBeNumeric}
+            end
+            R = eos.ThermodynamicConstants.Gas;
+            P = R*T./(V - b) - a./V.^2;
+        end
     end
     methods
         function obj = VanDerWaalsEos(Pc,Tc,Mw)
@@ -120,24 +144,6 @@ classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
             % -------
             % alpha : Temperature correction factor
             alpha = 1;
-        end
-        function P = pressure(obj,T,V)
-            % Compute pressure
-            %
-            % P = obj.PRESSURE(T,V)
-            %
-            % Parameters
-            % ----------
-            % T : Temperature [K]
-            % V : Volume [m3]
-            %
-            % Returns
-            % -------
-            % P : Pressure [Pa]
-            R = eos.ThermodynamicConstants.Gas;
-            a = obj.AttractionParam;
-            b = obj.RepulsionParam;
-            P = R*T./(V - b) - a./V.^2;
         end
     end
 end

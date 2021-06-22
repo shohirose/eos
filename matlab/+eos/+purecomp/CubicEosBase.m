@@ -125,6 +125,30 @@ classdef CubicEosBase
             % B : Reduced repulsion parameter
             B = obj.OmegaB*Pr./Tr;
         end
+        function P = pressure(obj,T,V)
+            % Compute pressure
+            %
+            % P = obj.PRESSURE(T,V)
+            %
+            % Parameters
+            % ----------
+            % T : Temperature [K]
+            % V : Volume [m3]
+            %
+            % Returns
+            % -------
+            % P : Pressure [Pa]
+            arguments
+                obj {mustBeA(obj,'eos.purecomp.CubicEosBase')}
+                T (:,:) {mustBeNumeric}
+                V (:,:) {mustBeNumeric}
+            end
+            Tr = obj.reducedTemperature(T);
+            alpha = obj.temperatureCorrectionFactor(Tr);
+            a = alpha*obj.AttractionParam;
+            b = obj.RepulsionParam;
+            P = obj.pressureImpl(T,V,a,b);
+        end
         function phi = fugacityCoeff(obj,z,s)
             % Compute fugacity coefficients
             %
