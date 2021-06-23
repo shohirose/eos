@@ -26,12 +26,12 @@ assert(max(abs((phi - [0.836787, 0.079908]')./phi)) < 1e-3);
 eos = SoaveRedlichKwongEos(Pc,Tc,omega,Mw,K);
 [z,s] = eos.zFactors(P,T,x);
 phi = eos.fugacityCoeff(z,s);
-assert(max(abs((z - 0.128659)./z)) < 1e-3);
-assert(max(abs((phi - [0.810235, 0.073144]')./phi)) < 1e-3);
+assert(max(abs((z - 0.111536)./z)) < 1e-3);
+assert(max(abs((phi - [0.790222, 0.007191]')./phi)) < 1e-3);
 
 %% Test 3: PengRobinsonEos
 eos = PengRobinsonEos(Pc,Tc,omega,Mw,K);
 [z,s] = eos.zFactors(P,T,x);
 phi = eos.fugacityCoeff(z,s);
-assert(max(abs((z - 0.111994)./z)) < 1e-3);
-assert(max(abs((phi - [0.688407, 0.123469]')./phi)) < 1e-3);
+assert(max(abs((z - 0.098738)./z)) < 1e-3);
+assert(max(abs((phi - [0.672411, 0.015679]')./phi)) < 1e-3);
