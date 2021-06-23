@@ -32,7 +32,7 @@ classdef PengRobinsonEos < eos.multicomp.CubicEosBase
             end
             coeffs = [1, B - 1, A - 2*B - 3*B^2, -A*B + B^2 + B^3];
         end
-        function lnPhi = lnFugacityCoeff(z,x,A,B,Aij,Bi)
+        function lnPhi = lnFugacityCoeffImpl(z,x,A,B,Aij,Bi)
             % Computes natural log of fugacity coefficients
             %
             % Parameters

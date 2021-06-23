@@ -22,7 +22,7 @@ classdef VanDerWaalsEos < eos.multicomp.CubicEosBase
             end
             coeffs = [1, -B - 1, A, -A*B];
         end
-        function lnPhi = lnFugacityCoeff(z,x,A,B,Aij,Bi)
+        function lnPhi = lnFugacityCoeffImpl(z,x,A,B,Aij,Bi)
             % Computes natural log of fugacity coefficients
             %
             % Parameters

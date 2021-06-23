@@ -214,6 +214,26 @@ classdef CubicEosBase
                 s.Aij = Aij;
             end
         end
+        function lnPhi = lnFugacityCoeff(obj,z,s)
+            % Compute fugacity coefficients.
+            %
+            % lnPhi = obj.LNFUGACITYCOEFF(z,s)
+            %
+            % Parameters
+            % ----------
+            % z : Z-factors
+            % s : struct containg parameters
+            %
+            % Returns
+            % -------
+            % lnPhi : Natural log of fugacity coefficients
+            arguments
+                obj {mustBeA(obj,'eos.multicomp.CubicEosBase')}
+                z (:,1) {mustBeNumeric}
+                s struct
+            end
+            lnPhi = obj.lnFugacityCoeffImpl(z,s.x,s.A,s.B,s.Aij,s.Bi);
+        end
         function phi = fugacityCoeff(obj,z,s)
             % Compute fugacity coefficients.
             %
@@ -232,7 +252,7 @@ classdef CubicEosBase
                 z (:,1) {mustBeNumeric}
                 s struct
             end
-            phi = exp(obj.lnFugacityCoeff(z,s.x,s.A,s.B,s.Aij,s.Bi));
+            phi = exp(obj.lnFugacityCoeffImpl(z,s.x,s.A,s.B,s.Aij,s.Bi));
         end
         function [a,b,aij] = applyMixingRule(obj,x,ai,bi)
             % Apply mixing rule to attraction and repulsion parameters.
