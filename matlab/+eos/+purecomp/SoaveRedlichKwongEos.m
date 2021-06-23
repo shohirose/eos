@@ -49,10 +49,10 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
             R = eos.ThermodynamicConstants.Gas;
             coeffs = [R*T, 2*(b*R*T - a), b^2*R*T + 3*a*b, 0, -a*b^3];
         end
-        function lnPhi = lnFugacityCoeff(z,A,B)
+        function lnPhi = lnFugacityCoeffImpl(z,A,B)
             % Compute natural log of fugacity coefficients
             %
-            % lnPhi = LNFUGACITYCOEFF(z,s)
+            % lnPhi = LNFUGACITYCOEFFIMPL(z,s)
             %
             % Parameters
             % ----------

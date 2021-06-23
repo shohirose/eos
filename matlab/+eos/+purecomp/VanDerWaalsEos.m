@@ -43,7 +43,7 @@ classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
             R = eos.ThermodynamicConstants.Gas;
             coeffs = [R*T, -2*a, 4*a*b, -2*a*b^2];
         end
-        function lnPhi = lnFugacityCoeff(z,A,B)
+        function lnPhi = lnFugacityCoeffImpl(z,A,B)
             % Compute the natural log of fugacity coeffcients
             %
             % lnPhi = LNGUGACITYCOEFF(z,s)

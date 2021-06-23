@@ -149,6 +149,24 @@ classdef CubicEosBase
             b = obj.RepulsionParam;
             P = obj.pressureImpl(T,V,a,b);
         end
+        function lnPhi = lnFugacityCoeff(obj,z,s)
+            % Compute fugacity coefficients
+            %
+            % Parameters
+            % ----------
+            % z : Z-factors
+            % s : struct containing parameters
+            %
+            % Returns
+            % -------
+            % lnPhi : Fugacity coefficients
+            arguments
+                obj {mustBeA(obj,'eos.purecomp.CubicEosBase')}
+                z (:,1) {mustBeNumeric}
+                s struct
+            end
+            lnPhi = exp(obj.lnFugacityCoeffImpl(z,s.A,s.B));
+        end
         function phi = fugacityCoeff(obj,z,s)
             % Compute fugacity coefficients
             %
@@ -165,7 +183,7 @@ classdef CubicEosBase
                 z (:,1) {mustBeNumeric}
                 s struct
             end
-            phi = exp(obj.lnFugacityCoeff(z,s.A,s.B));
+            phi = exp(obj.lnFugacityCoeffImpl(z,s.A,s.B));
         end
         function [z,s] = zFactors(obj,P,T)
             % Compute Z-factors
