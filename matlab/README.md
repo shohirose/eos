@@ -1,6 +1,17 @@
 # eos-matlab
 
-This is a package of cubic equations of state for MATLAB.
+This is a package for cubic equations of state (EoS) for MATLAB.
+
+# Overview
+
+- `eos.purecomp` : EoSs for pure-component systems.
+  - `VanDerWaalsEos` : Van der Waals EoS.
+  - `SoaveRedlichKwongEos` : Soave-Redlich-Kwong EoS.
+  - `PengRobinsonEos` : Peng-Robinson EoS.
+- `eos.multicomp` : EoSs for multi-component systems.
+  - `VanDerWaalsEos` : Van der Waals EoS.
+  - `SoaveRedlichKwongEos` : Soave-Redlich-Kwong EoS.
+  - `PengRobinsonEos` : Peng-Robinson EoS.
 
 # How to Use
 
