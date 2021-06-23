@@ -32,31 +32,33 @@ classdef PengRobinsonEos < eos.multicomp.CubicEosBase
             end
             coeffs = [1, B - 1, A - 2*B - 3*B^2, -A*B + B^2 + B^3];
         end
-        function lnPhi = lnFugacityCoeff(z,s)
-            % Compute natural log of fugacity coefficients
-            %
-            % lnPhi = LNFUGACITYCOEFF(z,s)
+        function lnPhi = lnFugacityCoeff(z,x,A,B,Aij,Bi)
+            % Computes natural log of fugacity coefficients
             %
             % Parameters
             % ----------
             % z : Z-factor
-            % s : struct containg parameters
+            % x : Composition
+            % A : Attraction parameter of the mixture
+            % B : Repulsion parameter of the mixture
+            % Aij : Combined attraction parameter between i and j
+            % components
+            % Bi : Repulsion parameter of each component
             %
             % Returns
             % -------
             % lnPhi : Natural log of fugacity coefficients
             arguments
-                z (:,1) {mustBeNumeric}
-                s struct
+                z (1,1) {mustBeNumeric}
+                x (:,1) {mustBeNumeric}
+                A (1,1) {mustBeNumeric}
+                B (1,1) {mustBeNumeric}
+                Aij (:,:) {mustBeNumeric}
+                Bi (:,1) {mustBeNumeric}
             end
             Sqrt2 = eos.multicomp.PengRobinsonEos.Sqrt2;
             Delta1 = eos.multicomp.PengRobinsonEos.Delta1;
             Delta2 = eos.multicomp.PengRobinsonEos.Delta2;
-            A = s.A;
-            B = s.B;
-            Aij = s.Aij;
-            Bi = s.Bi;
-            x = s.x;
             lnPhi = z - 1 - log(z - B) ...
                 - A./(2*Sqrt2*B)*log((z + Delta1*B)./(z + Delta2*B)) ...
                 *(2*(Aij*x)/A - Bi/B);

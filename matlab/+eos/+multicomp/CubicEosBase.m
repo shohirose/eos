@@ -232,7 +232,7 @@ classdef CubicEosBase
                 z (:,1) {mustBeNumeric}
                 s struct
             end
-            phi = exp(obj.lnFugacityCoeff(z,s));
+            phi = exp(obj.lnFugacityCoeff(z,s.x,s.A,s.B,s.Aij,s.Bi));
         end
         function [a,b,aij] = applyMixingRule(obj,x,ai,bi)
             % Apply mixing rule to attraction and repulsion parameters.

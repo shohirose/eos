@@ -22,26 +22,30 @@ classdef VanDerWaalsEos < eos.multicomp.CubicEosBase
             end
             coeffs = [1, -B - 1, A, -A*B];
         end
-        function lnPhi = lnFugacityCoeff(z,s)
+        function lnPhi = lnFugacityCoeff(z,x,A,B,Aij,Bi)
             % Computes natural log of fugacity coefficients
             %
             % Parameters
             % ----------
             % z : Z-factor
-            % s : State
+            % x : Composition
+            % A : Attraction parameter of the mixture
+            % B : Repulsion parameter of the mixture
+            % Aij : Combined attraction parameter between i and j
+            % components
+            % Bi : Repulsion parameter of each component
             %
             % Returns
             % -------
             % lnPhi : Natural log of fugacity coefficients
             arguments
                 z (1,1) {mustBeNumeric}
-                s struct
+                x (:,1) {mustBeNumeric}
+                A (1,1) {mustBeNumeric}
+                B (1,1) {mustBeNumeric}
+                Aij (:,:) {mustBeNumeric}
+                Bi (:,1) {mustBeNumeric}
             end
-            A = s.A;
-            B = s.B;
-            Aij = s.Aij;
-            Bi = s.Bi;
-            x = s.x;
             lnPhi = Bi/B*(z - 1) - log(z - B) - A/z*(2*(Aij*x)/A - Bi/B);
         end
         function P = pressureImpl(T,V,a,b)
