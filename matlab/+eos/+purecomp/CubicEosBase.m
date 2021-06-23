@@ -155,7 +155,7 @@ classdef CubicEosBase
             % Parameters
             % ----------
             % z : Z-factors
-            % s : State
+            % s : struct containing parameters
             %
             % Returns
             % -------
@@ -165,7 +165,7 @@ classdef CubicEosBase
                 z (:,1) {mustBeNumeric}
                 s struct
             end
-            phi = exp(obj.lnFugacityCoeff(z,s));
+            phi = exp(obj.lnFugacityCoeff(z,s.A,s.B));
         end
         function [z,s] = zFactors(obj,P,T)
             % Compute Z-factors
@@ -178,7 +178,7 @@ classdef CubicEosBase
             % Returns
             % -------
             % z : Z-factors
-            % s : State
+            % s : struct containing parameters
             arguments
                 obj {mustBeA(obj,'eos.purecomp.CubicEosBase')}
                 P (1,1) {mustBeNumeric}

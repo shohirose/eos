@@ -49,7 +49,7 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
             R = eos.ThermodynamicConstants.Gas;
             coeffs = [R*T, 2*(b*R*T - a), b^2*R*T + 3*a*b, 0, -a*b^3];
         end
-        function lnPhi = lnFugacityCoeff(z,s)
+        function lnPhi = lnFugacityCoeff(z,A,B)
             % Compute natural log of fugacity coefficients
             %
             % lnPhi = LNFUGACITYCOEFF(z,s)
@@ -57,17 +57,17 @@ classdef SoaveRedlichKwongEos < eos.purecomp.CubicEosBase
             % Parameters
             % ----------
             % z : Z-factor
-            % s : struct containing parameters
+            % A : Attraction parameter
+            % B : Repulsion parameter
             %
             % Returns
             % -------
             % lnPhi : Natural log of fugacity coefficients
             arguments
                 z (:,1) {mustBeNumeric}
-                s struct
+                A (1,1) {mustBeNumeric}
+                B (1,1) {mustBeNumeric}
             end
-            A = s.A;
-            B = s.B;
             lnPhi = z - 1 - log(z - B) - A/B*log(B./z + 1);
         end
         function P = pressureImpl(T,V,a,b)

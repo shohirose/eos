@@ -55,7 +55,7 @@ classdef PengRobinsonEos < eos.purecomp.CubicEosBase
             coeffs = [R*T, 4*b*R*T - 2*a, 2*(b^2*R*T + a*b), ...
                 2*b^2*(a - 2*b*R*T), b^3*(b*R*T - 2*a)];
         end
-        function lnPhi = lnFugacityCoeff(z,s)
+        function lnPhi = lnFugacityCoeff(z,A,B)
             % Compute the natural log of fugacity coefficients.
             %
             % lnPhi = LNFUGACITYCOEFFS(z,s)
@@ -63,20 +63,20 @@ classdef PengRobinsonEos < eos.purecomp.CubicEosBase
             % Parameters
             % ----------
             % z : Z-factor
-            % s : struct containing parameters
+            % A : Attraction parameter
+            % B : Repulsion parameter
             %
             % Returns
             % -------
             % lnPhi : Natural log of fugacity coefficients
             arguments
                 z (:,1) {mustBeNumeric}
-                s struct
+                A (1,1) {mustBeNumeric}
+                B (1,1) {mustBeNumeric}
             end
             Sqrt2 = eos.purecomp.PengRobinsonEos.Sqrt2;
             Delta1 = eos.purecomp.PengRobinsonEos.Delta1;
             Delta2 = eos.purecomp.PengRobinsonEos.Delta2;
-            A = s.A;
-            B = s.B;
             lnPhi = z - 1 - log(z - B) ...
                 - A./(2*Sqrt2*B).*log((z + Delta1*B)./(z + Delta2*B));
         end

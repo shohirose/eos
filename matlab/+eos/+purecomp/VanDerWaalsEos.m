@@ -43,7 +43,7 @@ classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
             R = eos.ThermodynamicConstants.Gas;
             coeffs = [R*T, -2*a, 4*a*b, -2*a*b^2];
         end
-        function lnPhi = lnFugacityCoeff(z,s)
+        function lnPhi = lnFugacityCoeff(z,A,B)
             % Compute the natural log of fugacity coeffcients
             %
             % lnPhi = LNGUGACITYCOEFF(z,s)
@@ -51,17 +51,17 @@ classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
             % Parameters
             % ----------
             % z : Z-factors
-            % s : struct containing parameters
+            % A : Attraction parameter
+            % B : Repulsion parameter
             %
             % Returns
             % -------
             % lnPhi : Natural log of fugacity coefficients
             arguments
                 z (:,1) {mustBeNumeric}
-                s struct
+                A (1,1) {mustBeNumeric}
+                B (1,1) {mustBeNumeric}
             end
-            A = s.A;
-            B = s.B;
             lnPhi = z - 1 - log(z - B) - A./z;
         end
         function P = pressureImpl(T,V,a,b)
