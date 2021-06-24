@@ -32,10 +32,10 @@ classdef PengRobinsonEos < eos.purecomp.CubicEosBase
             end
             coeffs = [1, B - 1, A - 2*B - 3*B^2, -A*B + B^2 + B^3];
         end
-        function coeffs = dPdTPolyEq(T,a,b)
-            % Compute coefficients of the polynomial of dPdT = 0.
+        function coeffs = dPdVPolyEq(T,a,b)
+            % Compute coefficients of the polynomial of dPdV = 0.
             %
-            % coeffs = DPDTPOLYEQ(T,a,b)
+            % coeffs = DPDVPOLYEQ(T,a,b)
             %
             % Parameters
             % ----------
@@ -45,7 +45,7 @@ classdef PengRobinsonEos < eos.purecomp.CubicEosBase
             %
             % Returns
             % -------
-            % coeffs : Coefficients of the polynomial of dPdT = 0.
+            % coeffs : Coefficients of the polynomial of dPdV = 0.
             arguments
                 T (1,1) {mustBeNumeric}
                 a (1,1) {mustBeNumeric}

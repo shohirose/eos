@@ -21,10 +21,10 @@ classdef VanDerWaalsEos < eos.purecomp.CubicEosBase
             end
             coeffs = [1, -B - 1, A, -A*B];
         end
-        function coeffs = dPdTPolyEq(T,a,b)
-            % Compute the coefficients of a polynomial equation of dPdT = 0
+        function coeffs = dPdVPolyEq(T,a,b)
+            % Compute the coefficients of a polynomial equation of dPdV = 0
             %
-            % coeffs = DPDTPOLYEQ(T,a,b)
+            % coeffs = DPDVPOLYEQ(T,a,b)
             %
             % Parameters
             % ----------

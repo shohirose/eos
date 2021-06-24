@@ -239,7 +239,7 @@ classdef CubicEosBase
             alpha = obj.temperatureCorrectionFactor(Tr);
             a = alpha*obj.AttractionParam;
             b = obj.RepulsionParam;
-            x = roots(obj.dPdTPolyEq(T,a,b));
+            x = roots(obj.dPdVPolyEq(T,a,b));
             V = x(imag(x) == 0);
             V = V(V > b);
             V = sort(V);

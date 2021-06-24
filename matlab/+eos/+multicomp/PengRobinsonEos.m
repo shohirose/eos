@@ -81,10 +81,10 @@ classdef PengRobinsonEos < eos.multicomp.CubicEosBase
             R = eos.ThermodynamicConstants.Gas;
             P = R*T./(V - b) - a./((V - b).*(V + b) + 2*b*V);
         end
-        function coeffs = dPdTPolyEq(T,a,b)
-            % Compute the coefficients of the polynomial of dPdT = 0.
+        function coeffs = dPdVPolyEq(T,a,b)
+            % Compute the coefficients of the polynomial of dPdV = 0.
             %
-            % coeffs = dPdTPolyEq(a,b)
+            % coeffs = DPDVPOLYEQ(T,a,b)
             %
             % Parameters
             % ----------
