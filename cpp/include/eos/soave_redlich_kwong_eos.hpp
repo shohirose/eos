@@ -1,6 +1,7 @@
 #ifndef EOS_SOAVE_REDLICH_KWONG_EOS_HPP
 #define EOS_SOAVE_REDLICH_KWONG_EOS_HPP
 
+#include <cmath>
 #include <eos/cubic_eos_base.hpp>
 
 namespace eos {

@@ -3,6 +3,7 @@
 
 #include <eos/cubic_eos_base.hpp>
 #include <eos/mathematical_constants.hpp>
+#include <cmath>
 
 namespace eos {
 
