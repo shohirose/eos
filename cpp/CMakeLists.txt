@@ -32,7 +32,15 @@ target_compile_definitions(eos
   )
 
 if(EOS_BUILD_TEST)
+  # Require GNU Scientific Library
   find_package(GSL REQUIRED)
+
+  include(FetchContent)
+  FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG release-1.12.1
+  )  
 
   # Disable googletest options
   option(BUILD_GMOCK "Build gmock" OFF)
@@ -43,9 +51,7 @@ if(EOS_BUILD_TEST)
   if(WIN32)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
   endif()
+  FetchContent_MakeAvailable(googletest)
 
-  add_subdirectory(third-party/googletest)
-
-  enable_testing()
   add_subdirectory(test)
 endif()
