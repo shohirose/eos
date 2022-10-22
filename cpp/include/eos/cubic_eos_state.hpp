@@ -31,9 +31,29 @@ struct CubicEosState {
     return Eos::ln_fugacity_coeff(z, a_, b_);
   }
 
+  /// @param[in] z Z-factors
+  std::vector<Scalar> ln_fugacity_coeff(
+      const std::vector<Scalar>& z) const noexcept {
+    std::vector<Scalar> ln_phi(z.size());
+    for (std::size_t i = 0; i < z.size(); ++i) {
+      ln_phi[i] = Eos::ln_fugacity_coeff(z[i], a_, b_);
+    }
+    return ln_phi;
+  }
+
   /// @param[in] z Z-factor
   Scalar fugacity_coeff(const Scalar& z) const noexcept {
     return Eos::fugacity_coeff(z, a_, b_);
+  }
+
+  /// @param[in] z Z-factors
+  std::vector<Scalar> fugacity_coeff(
+      const std::vector<Scalar>& z) const noexcept {
+    std::vector<Scalar> phi(z.size());
+    for (std::size_t i = 0; i < z.size(); ++i) {
+      phi[i] = Eos::fugacity_coeff(z[i], a_, b_);
+    }
+    return phi;
   }
 
  private:
