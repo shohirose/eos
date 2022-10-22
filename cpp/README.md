@@ -43,7 +43,7 @@ const auto state = eos.create_state(p, t);
 // 2. There can be multile values of z-factors.
 const auto z = state.zfactors(CubicEquationSolver{});
 
-// Computes fugacity coefficient from a corresponding z-factor
+// Computes fugacity coefficients from corresponding z-factors
 const auto phi = state.fugacity_coeff(z);
 ```
 
