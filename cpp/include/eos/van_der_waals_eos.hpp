@@ -65,6 +65,16 @@ class VanDerWaalsEos : public CubicEosBase<VanDerWaalsEos<Scalar>> {
     return std::exp(ln_fugacity_coeff(z, a, b));
   }
 
+  /// @brief Computes residual Helmholtz free energy
+  /// @param[in] z Z-factor
+  /// @param[in] a Reduced attraction parameter
+  /// @param[in] b Reduced repulsion parameter
+  /// @returns Residual Helmholtz free energy
+  static Scalar residual_helmholtz_free_energy(const Scalar& z, const Scalar& a,
+                                               const Scalar& b) noexcept {
+    return std::log(z / (z - b)) - a / z;
+  }
+
   // Constructors
 
   VanDerWaalsEos() = default;

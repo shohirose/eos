@@ -1,9 +1,9 @@
 #ifndef EOS_PENG_ROBINSON_EOS_HPP
 #define EOS_PENG_ROBINSON_EOS_HPP
 
+#include <cmath>
 #include <eos/cubic_eos_base.hpp>
 #include <eos/mathematical_constants.hpp>
-#include <cmath>
 
 namespace eos {
 
@@ -64,6 +64,20 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
   static Scalar fugacity_coeff(const Scalar& z, const Scalar& a,
                                const Scalar& b) noexcept {
     return std::exp(ln_fugacity_coeff(z, a, b));
+  }
+
+  /// @brief Computes residual Helmholtz free energy
+  /// @param[in] z Z-factor
+  /// @param[in] a Reduced attraction parameter
+  /// @param[in] b Reduced repulsion parameter
+  /// @returns Residual Helmholtz free energy
+  static Scalar residual_helmholtz_free_energy(const Scalar& z, const Scalar& a,
+                                               const Scalar& b) noexcept {
+    constexpr auto sqrt2 = sqrt_two<Scalar>();
+    constexpr auto delta1 = 1 + sqrt2;
+    constexpr auto delta2 = 1 - sqrt2;
+    return std::log(z / (z - b)) +
+           a / (2 * sqrt2 * b) * std::log((z + delta2 * b) / (z + delta1 * b));
   }
 
   // Constructors
