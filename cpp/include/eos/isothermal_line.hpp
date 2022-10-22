@@ -2,6 +2,7 @@
 #define EOS_ISOTHERMAL_LINE_HPP
 
 #include <eos/cubic_eos_traits.hpp>
+#include <vector>
 
 namespace eos {
 
@@ -19,6 +20,15 @@ class IsothermalLine {
   /// @param[in] v Volume
   Scalar pressure(const Scalar& v) const noexcept {
     return Eos::pressure_impl(t_, v, a_, b_);
+  }
+
+  /// @param[in] v List of Volumes
+  std::vector<Scalar> pressure(const std::vector<Scalar>& v) const noexcept {
+    std::vector<Scalar> p(v.size());
+    for (std::size_t i = 0; i < v.size(); ++i) {
+      p[i] = Eos::pressure_impl(t_, v[i], a_, b_);
+    }
+    return p;
   }
 
  private:
