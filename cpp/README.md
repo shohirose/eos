@@ -14,7 +14,7 @@ Helper functions are defined to easily create an EoS object:
 
 ## Dependencies
 
-[GNU Scientific Library (GSL)](https://www.gnu.org/software/gsl/) and [Googletest](https://github.com/google/googletest) is used for unit testing. While Googletest is included as a git submodule under the `third-party` directory, GSL must be provided by users. Using vcpkg, you can easily install and provide GSL with this library.
+[GNU Scientific Library (GSL)](https://www.gnu.org/software/gsl/) and [Googletest](https://github.com/google/googletest) is used for testing. While Googletest is auomatically downloaded, GSL must be provided by users. Using vcpkg, you can easily install and provide GSL with this library.
 
 ## Example of Usage
 
@@ -44,10 +44,7 @@ const auto state = eos.create_state(p, t);
 const auto z = state.zfactors(CubicEquationSolver{});
 
 // Computes fugacity coefficient from a corresponding z-factor
-std::vector<double> phi(z.size())
-for (std::size_t = 0; i < z.size(); ++i) {
-  phi[i] = state.fugacity_coeff(z[i]);
-}
+const auto phi = state.fugacity_coeff(z);
 ```
 
 An example of `CubicEquationSolver` class can be found in `test/cubic_eos_test.cpp`.
