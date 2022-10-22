@@ -39,9 +39,11 @@ TEST(CubicEosTest, VanDerWaalsEosTest) {
     EXPECT_NEAR(z[1], 0.275339, 1e-6);
     EXPECT_NEAR(z[2], 0.616434, 1e-6);
 
-    EXPECT_NEAR(state.fugacity_coeff(z[0]), 0.756747, 1e-6);
-    EXPECT_NEAR(state.fugacity_coeff(z[1]), 0.758617, 1e-6);
-    EXPECT_NEAR(state.fugacity_coeff(z[2]), 0.741050, 1e-6);
+    const auto phi = state.fugacity_coeff(z);
+
+    EXPECT_NEAR(phi[0], 0.756747, 1e-6);
+    EXPECT_NEAR(phi[1], 0.758617, 1e-6);
+    EXPECT_NEAR(phi[2], 0.741050, 1e-6);
   }
 
   const std::vector<double> v = {0.001, 0.01, 0.1};
@@ -80,9 +82,11 @@ TEST(CubicEosTest, SoaveRedlichKwongEosTest) {
     EXPECT_NEAR(z[1], 0.310673, 1e-6);
     EXPECT_NEAR(z[2], 0.536884, 1e-6);
 
-    EXPECT_NEAR(state.fugacity_coeff(z[0]), 0.69289, 1e-5);
-    EXPECT_NEAR(state.fugacity_coeff(z[1]), 0.70862, 1e-5);
-    EXPECT_NEAR(state.fugacity_coeff(z[2]), 0.70353, 1e-5);
+    const auto phi = state.fugacity_coeff(z);
+
+    EXPECT_NEAR(phi[0], 0.69289, 1e-5);
+    EXPECT_NEAR(phi[1], 0.70862, 1e-5);
+    EXPECT_NEAR(phi[2], 0.70353, 1e-5);
   }
 
   const std::vector<double> v = {0.001, 0.01, 0.1};
@@ -121,9 +125,11 @@ TEST(CubicEosTest, PengRobinsonEosTest) {
     EXPECT_NEAR(z[1], 0.292355, 1e-6);
     EXPECT_NEAR(z[2], 0.510231, 1e-6);
 
-    EXPECT_NEAR(state.fugacity_coeff(z[0]), 0.67210, 1e-5);
-    EXPECT_NEAR(state.fugacity_coeff(z[1]), 0.68819, 1e-5);
-    EXPECT_NEAR(state.fugacity_coeff(z[2]), 0.68362, 1e-5);
+    const auto phi = state.fugacity_coeff(z);
+
+    EXPECT_NEAR(phi[0], 0.67210, 1e-5);
+    EXPECT_NEAR(phi[1], 0.68819, 1e-5);
+    EXPECT_NEAR(phi[2], 0.68362, 1e-5);
   }
 
   const std::vector<double> v = {0.001, 0.01, 0.1};
