@@ -13,7 +13,7 @@ option(EOS_BUILD_TEST "Build unit tests" ON)
 add_library(eos INTERFACE)
 target_compile_features(eos
   INTERFACE
-    cxx_std_14
+    cxx_std_17
   )
 target_compile_options(eos
   INTERFACE
