@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <eos/peng_robinson_eos.hpp>
 #include <eos/soave_redlich_kwong_eos.hpp>
 #include <eos/van_der_waals_eos.hpp>
-#include <eos/peng_robinson_eos.hpp>
 #include <vector>
 
 class CubicEquationSolver {
