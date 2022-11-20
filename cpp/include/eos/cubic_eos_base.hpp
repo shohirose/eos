@@ -64,7 +64,7 @@ class CubicEosBase {
    * @brief Computes reduced attraction parameter.
    * @param[in] pr Reduced pressure
    * @param[in] tr Reduced temperature
-   * @returns Scalar Reduced attraction parameter
+   * @return Scalar Reduced attraction parameter
    */
   static Scalar reduced_attraction_param(const Scalar& pr,
                                          const Scalar& tr) noexcept {
@@ -99,22 +99,24 @@ class CubicEosBase {
   /**
    * @brief Computes reduced pressure
    * @param[in] p Pressure
-   * @returns Scalar Recuded pressure
+   * @return Scalar Recuded pressure
    * 
    * @f[
    * P_r = \frac{P}{P_c},
    * @f]
-   * where @f( P @f) is pressure, and @f( P_c @f) is critical pressure.
+   * where @f$ P @f$ is pressure, and @f$ P_c @f$ is critical pressure.
    */
   Scalar reduced_pressure(const Scalar& p) const noexcept { return p / pc_; }
 
   /**
    * @brief Computes reduced temperature
    * @param[in] t Temperature
-   * @returns Scalar Reduced temperature
+   * @return Scalar Reduced temperature
    * 
-   * @f[ T = frac{T}{T_c} @f]
-   * where @f( T @f) is temperature, and @f( T_c @f) is critical temperature.
+   * @f[
+   * T = \frac{T}{T_c}
+   * @f]
+   * where @f$ T @f$ is temperature, and @f$ T_c @f$ is critical temperature.
    */
   Scalar reduced_temperature(const Scalar& t) const noexcept { return t / tc_; }
 
@@ -122,10 +124,12 @@ class CubicEosBase {
    * @brief Computes pressure at given temperature and volume
    * @param[in] t Temperature
    * @param[in] v Volume
-   * @returns Scalar pressure
+   * @return Scalar pressure
    * 
-   * @f[ P = P(T, V) @f]
-   * where @f( P @f) is pressure, @f( T @f) is temperature, and @f( V @f) is
+   * @f[
+   * P = P(T, V)
+   * @f]
+   * where @f$ P @f$ is pressure, @f$ T @f$ is temperature, and @f$ V @f$ is
    * volume.
    */
   Scalar pressure(const Scalar& t, const Scalar& v) const noexcept {
@@ -137,7 +141,7 @@ class CubicEosBase {
   /**
    * @brief Creates an isothermal line
    * @param[in] t Temperature
-   * @returns IsothermalLine<Derived> Isothermal line
+   * @return IsothermalLine<Derived> Isothermal line
    */
   IsothermalLine<Derived> create_line(const Scalar& t) const noexcept {
     const auto tr = this->reduced_temperature(t);
@@ -149,7 +153,7 @@ class CubicEosBase {
    * @brief Creates isobaric-isothermal state
    * @param[in] p Pressure
    * @param[in] t Temperature
-   * @returns CubicEosState<Derived> Isobaric-isothermal state
+   * @return CubicEosState<Derived> Isobaric-isothermal state
    */
   CubicEosState<Derived> create_state(const Scalar& p,
                                       const Scalar& t) const noexcept {

@@ -38,8 +38,8 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
    * @f[
    * P = \frac{RT}{V-b} - \frac{a}{V^2+2bV-b^2},
    * @f]
-   * where @f( P @f) is pressure, @f( T @f) is temperature, @f( V @f) is volume,
-   * @f( R @f) is gas constant, @f( a @f) is attraction parameter, and @f( b @f)
+   * where @f$ P @f$ is pressure, @f$ T @f$ is temperature, @f$ V @f$ is volume,
+   * @f$ R @f$ is gas constant, @f$ a @f$ is attraction parameter, and @f$ b @f$
    * is repulsion parameter.
    */
   static Scalar pressure_impl(const Scalar& t, const Scalar& v, const Scalar& a,
@@ -58,8 +58,8 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
    * @f[
    * Z^3 + (1-B)Z^2 + (3B+2)BZ + (B^2+B-A)B = 0,
    * @f]
-   * where @f( Z @f) is Z-factor, @f( A @f) is reduced attraction parameter,
-   * and @f( B @f) is reduced repulsion parameter.
+   * where @f$ Z @f$ is Z-factor, @f$ A @f$ is reduced attraction parameter,
+   * and @f$ B @f$ is reduced repulsion parameter.
    * @f[
    * A = \frac{aP}{(RT)^2}, \quad B = \frac{bP}{RT}
    * @f]
@@ -76,11 +76,11 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
    * @param[in] b Reduced repulsion parameter
    * @returns The natural log of a fugacity coefficient
    * 
-   * Fugacity coefficient @f( \phi @f) for Peng-Robinson EoS can be expressed by
-   * @f[
+   * Fugacity coefficient @f$ \phi @f$ for Peng-Robinson EoS can be expressed by
+   * @f{gather*}{
    * \ln \phi = -\ln(Z-B) + (Z-1) + I, \\
-   * I = \frac{A}{2\sqrt{2}}B} \ln \frac{Z-(\sqrt{2}-1)B}{Z+(\sqrt{2}+1)B}.
-   * @f]
+   * I = \frac{A}{2\sqrt{2}B} \ln \frac{Z-(\sqrt{2}-1)B}{Z+(\sqrt{2}+1)B}.
+   * @f}
    */
   static Scalar ln_fugacity_coeff(const Scalar& z, const Scalar& a,
                                   const Scalar& b) noexcept {
@@ -106,7 +106,7 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
    * @param[in] b Reduced repulsion parameter
    * @returns Residual Helmholtz free energy
    * 
-   * Residual Helmholtz free energy @f( F^r @f) for Peng-Robinson EoS can be
+   * Residual Helmholtz free energy @f$ F^r @f$ for Peng-Robinson EoS can be
    * expressed by
    * @f[
    * \frac{F^r}{RT} = \ln \frac{Z}{Z-B} + I.
@@ -128,7 +128,7 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
    * @param[in] b Reduced repulsion parameter
    * @returns Residual Gibbs free energy
    * 
-   * Residual Gibbs free energy @f( G^r @f) for Peng-Robinson EoS can be
+   * Residual Gibbs free energy @f$ G^r @f$ for Peng-Robinson EoS can be
    * expressed by
    * @f[
    * \frac{G^r}{RT} = (Z-1) + \ln \frac{Z}{Z-B} + I.
