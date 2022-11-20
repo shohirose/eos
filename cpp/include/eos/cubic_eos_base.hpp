@@ -19,8 +19,12 @@ class CubicEosBase {
   CubicEosBase(const CubicEosBase&) = default;
   CubicEosBase(CubicEosBase&&) = default;
 
-  /// @param[in] pc Critical pressure
-  /// @param[in] tc Critical temperature
+  /**
+   * @brief Construct a new Cubic Eos Base object.
+   * 
+   * @param pc Critical pressure
+   * @param tc Critical temperature
+   */
   CubicEosBase(const Scalar& pc, const Scalar& tc) noexcept
       : pc_{pc},
         tc_{tc},
@@ -32,33 +36,47 @@ class CubicEosBase {
 
   // Static functions
 
-  /// @param[in] pc Critical pressure
-  /// @param[in] tc Critical temperature
+  /**
+   * @brief Computes attraction parameter.
+   * 
+   * @param pc Critical presure
+   * @param tc Critical temperature
+   * @return Scalar Attraction parameter
+   */
   static Scalar attraction_param(const Scalar& pc, const Scalar& tc) noexcept {
     constexpr auto R = gas_constant<Scalar>();
     return (omega_a * R * R) * tc * tc / pc;
   }
 
-  /// @param[in] pc Critical pressure
-  /// @param[in] tc Critical temperature
+  /**
+   * @brief Computes repulsion parameter.
+   * 
+   * @param pc Critical presure
+   * @param tc Critical temperature
+   * @return Scalar Repulsion parameter
+   */
   static Scalar repulsion_param(const Scalar& pc, const Scalar& tc) noexcept {
     constexpr auto R = gas_constant<Scalar>();
     return (omega_b * R) * tc / pc;
   }
 
-  /// @brief Returns reduced attraction parameter at a given pressure and
-  /// temperature without temperature correction.
-  /// @param[in] pr Reduced pressure
-  /// @param[in] tr Reduced temperature
+  /**
+   * @brief Computes reduced attraction parameter.
+   * @param[in] pr Reduced pressure
+   * @param[in] tr Reduced temperature
+   * @returns Scalar Reduced attraction parameter
+   */
   static Scalar reduced_attraction_param(const Scalar& pr,
                                          const Scalar& tr) noexcept {
     return omega_a * pr / (tr * tr);
   }
 
-  /// @brief Returns reduced repulsion parameter at a given pressure and
-  /// temperature.
-  /// @param[in] pr Reduced pressure
-  /// @param[in] tr Reduced temperature
+  /**
+   * @brief Computes reduced repulsion parameter.
+   * @param[in] pr Reduced pressure
+   * @param[in] tr Reduced temperature
+   * @return Scalar Reduced repulsion parameter
+   */
   static Scalar reduced_repulsion_param(const Scalar& pr,
                                         const Scalar& tr) noexcept {
     return omega_b * pr / tr;
@@ -66,8 +84,11 @@ class CubicEosBase {
 
   // Member functions
 
-  /// @param[in] pc Critical pressure
-  /// @param[in] tc Critical temperature
+  /**
+   * @brief Set parameters.
+   * @param pc Critical pressure
+   * @param tc Critical temperature
+   */
   void set_params(const Scalar& pc, const Scalar& tc) noexcept {
     pc_ = pc;
     tc_ = tc;
@@ -75,34 +96,61 @@ class CubicEosBase {
     b_ = repulsion_param(pc, tc);
   }
 
-  /// @brief Computes reduced pressure
-  /// @param[in] p Pressure
+  /**
+   * @brief Computes reduced pressure
+   * @param[in] p Pressure
+   * @returns Scalar Recuded pressure
+   * 
+   * @f[
+   * P_r = \frac{P}{P_c},
+   * @f]
+   * where @f( P @f) is pressure, and @f( P_c @f) is critical pressure.
+   */
   Scalar reduced_pressure(const Scalar& p) const noexcept { return p / pc_; }
 
-  /// @brief Computes reduced temperature
-  /// @param[in] t Temperature
+  /**
+   * @brief Computes reduced temperature
+   * @param[in] t Temperature
+   * @returns Scalar Reduced temperature
+   * 
+   * @f[ T = frac{T}{T_c} @f]
+   * where @f( T @f) is temperature, and @f( T_c @f) is critical temperature.
+   */
   Scalar reduced_temperature(const Scalar& t) const noexcept { return t / tc_; }
 
-  /// @brief Computes pressure at given temperature and volume
-  /// @param[in] t Temperature
-  /// @param[in] v Volume
+  /**
+   * @brief Computes pressure at given temperature and volume
+   * @param[in] t Temperature
+   * @param[in] v Volume
+   * @returns Scalar pressure
+   * 
+   * @f[ P = P(T, V) @f]
+   * where @f( P @f) is pressure, @f( T @f) is temperature, and @f( V @f) is
+   * volume.
+   */
   Scalar pressure(const Scalar& t, const Scalar& v) const noexcept {
     const auto tr = this->reduced_temperature(t);
     const auto a = this->derived().correction_factor(tr) * a_;
     return Derived::pressure_impl(t, v, a, b_);
   }
 
-  /// @brief Creates an isothermal line
-  /// @param[in] t Temperature
+  /**
+   * @brief Creates an isothermal line
+   * @param[in] t Temperature
+   * @returns IsothermalLine<Derived> Isothermal line
+   */
   IsothermalLine<Derived> create_line(const Scalar& t) const noexcept {
     const auto tr = this->reduced_temperature(t);
     const auto a = this->derived().correction_factor(tr) * a_;
     return {t, a, b_};
   }
 
-  /// @brief Creates isobaric-isothermal state
-  /// @param[in] p Pressure
-  /// @param[in] t Temperature
+  /**
+   * @brief Creates isobaric-isothermal state
+   * @param[in] p Pressure
+   * @param[in] t Temperature
+   * @returns CubicEosState<Derived> Isobaric-isothermal state
+   */
   CubicEosState<Derived> create_state(const Scalar& p,
                                       const Scalar& t) const noexcept {
     const auto pr = this->reduced_pressure(p);
