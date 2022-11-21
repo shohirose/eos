@@ -6,6 +6,12 @@
 
 namespace eos {
 
+/**
+ * @brief Get square-root of two.
+ * 
+ * @tparam T Scalar type
+ * @return std::enable_if_t<std::is_floating_point_v<T>, T> 
+ */
 template <typename T>
 inline constexpr auto sqrt_two() noexcept
     -> std::enable_if_t<std::is_floating_point_v<T>, T> {
@@ -15,6 +21,12 @@ inline constexpr auto sqrt_two() noexcept
   return static_cast<T>(M_SQRT2);
 }
 
+/**
+ * @brief Get pi.
+ * 
+ * @tparam T Scalar type
+ * @return std::enable_if_t<std::is_floating_point_v<T>, T> 
+ */
 template <typename T>
 inline constexpr auto pi() noexcept
     -> std::enable_if_t<std::is_floating_point_v<T>, T> {

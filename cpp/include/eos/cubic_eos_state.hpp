@@ -6,6 +6,11 @@
 
 namespace eos {
 
+/**
+ * @brief EoS state at given pressure and temperature.
+ * 
+ * @tparam Eos EoS type
+ */
 template <typename Eos>
 struct CubicEosState {
  public:
