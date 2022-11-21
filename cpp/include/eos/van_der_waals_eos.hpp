@@ -139,6 +139,23 @@ namespace eos
       return z - 1 + residual_helmoltz_free_energy(z, a, b);
     }
 
+    /**
+     * @brief Computes residual internal energy.
+     *
+     * @param z Z-factor
+     * @param a Attraction parameter
+     * @param b Repulsion parameter
+     * @return Scalar Residual internal energy
+     *
+     * @f[
+     * \frac{U^r}{NRT} = -\frac{A}{Z}.
+     * @f]
+     */
+    static Scalar residual_internal_energy(const Scalar &z, const Scalar &a, const Scalar &b) noexcept
+    {
+      return -a / z;
+    }
+
     // Constructors
 
     VanDerWaalsEos() = default;
