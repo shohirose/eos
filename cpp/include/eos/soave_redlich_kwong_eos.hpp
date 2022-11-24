@@ -97,6 +97,27 @@ class SoaveRedlichKwongEos : public CubicEosBase<SoaveRedlichKwongEos<Scalar>> {
     return z - 1 + residual_helmoltz_free_energy(z, a, b);
   }
 
+  /**
+   * @brief Computes residual internal energy.
+   *
+   * @param z Z-factor
+   * @param a Attraction parameter
+   * @param b Repulsion parameter
+   * @param dlna_dlnt Logarithmic derivative of attraction correction factor in
+   * terms of temperature
+   * @return Scalar Residual internal energy
+   *
+   * @f[
+   * \frac{U^r}{NRT} = \left( 1 - \frac{d \ln \alpha}{d \ln T}) \frac{A}{B}
+   * \ln \frac{Z}{Z + B}.
+   * @f]
+   */
+  static Scalar residual_internal_energy(const Scalar& z, const Scalar& a,
+                                         const Scalar& b,
+                                         const Scalar& dlna_dlnt) noexcept {
+    return (1 - dlna_dlnt) * a / b * std::log(z / (z + b));
+  }
+
   // Constructors
 
   SoaveRedlichKwongEos() = default;
