@@ -41,7 +41,8 @@ class SoaveRedlichKwongEos : public CubicEosBase<SoaveRedlichKwongEos<Scalar>> {
    * @brief Computes coefficients of the cubic equation of Z-factor
    * @param[in] a Reduced attraction parameter
    * @param[in] b Reduced repulsion parameter
-   * @returns std::array<Scalar, 3> Coefficients of the cubic equation of z-factor
+   * @returns std::array<Scalar, 3> Coefficients of the cubic equation of
+   * z-factor
    */
   static std::array<Scalar, 3> zfactor_cubic_eq(const Scalar& a,
                                                 const Scalar& b) noexcept {
@@ -102,7 +103,7 @@ class SoaveRedlichKwongEos : public CubicEosBase<SoaveRedlichKwongEos<Scalar>> {
 
   /**
    * @brief Construct a new Soave Redlich Kwong Eos object
-   * 
+   *
    * @param pc Critical pressure
    * @param tc Critical temperature
    * @param omega Acentric factor
@@ -121,7 +122,7 @@ class SoaveRedlichKwongEos : public CubicEosBase<SoaveRedlichKwongEos<Scalar>> {
 
   /**
    * @brief Set parameters.
-   * 
+   *
    * @param pc Critical pressure
    * @param tc Critical temperature
    * @param omega Acentric factor
@@ -135,7 +136,7 @@ class SoaveRedlichKwongEos : public CubicEosBase<SoaveRedlichKwongEos<Scalar>> {
 
   /**
    * @brief Computes the correction factor for attraction parameter.
-   * 
+   *
    * @param tr[in] Reduced temperature
    * @return constexpr Scalar Correction factor
    */
@@ -147,7 +148,7 @@ class SoaveRedlichKwongEos : public CubicEosBase<SoaveRedlichKwongEos<Scalar>> {
  private:
   /**
    * @brief Compute the parameter @f$ m @f$ for correction factor
-   * 
+   *
    * @param omega[in] Acentric factor
    * @return Scalar Parameter @f$ m @f$
    */
