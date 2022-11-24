@@ -146,7 +146,7 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
    * @return Scalar Residual internal energy
    *
    * @f[
-   * \frac{U^r}{NRT} = \left( 1 - \frac{d \ln \alpha}{d \ln T}) I.
+   * \frac{U^r}{NRT} = \left( 1 - \frac{d \ln \alpha}{d \ln T} \right) I.
    * @f]
    */
   static Scalar residual_internal_energy(const Scalar& z, const Scalar& a,
