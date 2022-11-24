@@ -27,13 +27,13 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
 
   /**
    * @brief Computes pressure at given temperature and volume.
-   * 
+   *
    * @param t Temperature
    * @param v Volume
    * @param a Attraction parameter
    * @param b Repulsion parameter
    * @return Scalar Pressure
-   * 
+   *
    * Pressure for Peng-Robinso EoS can be expressed by
    * @f[
    * P = \frac{RT}{V-b} - \frac{a}{V^2+2bV-b^2},
@@ -53,7 +53,7 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
    * @param[in] a Reduced attraction parameter
    * @param[in] b Reduced repulsion parameter
    * @returns Coefficients of the cubic equation of z-factor
-   * 
+   *
    * A cubic equation of Z-factor for Peng-Robinson EoS can be expressed by
    * @f[
    * Z^3 + (1-B)Z^2 + (3B+2)BZ + (B^2+B-A)B = 0,
@@ -75,7 +75,7 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
    * @param[in] a Reduced attraction parameter
    * @param[in] b Reduced repulsion parameter
    * @returns The natural log of a fugacity coefficient
-   * 
+   *
    * Fugacity coefficient @f$ \phi @f$ for Peng-Robinson EoS can be expressed by
    * @f{gather*}{
    * \ln \phi = -\ln(Z-B) + (Z-1) + I, \\
@@ -105,7 +105,7 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
    * @param[in] a Reduced attraction parameter
    * @param[in] b Reduced repulsion parameter
    * @returns Residual Helmholtz free energy
-   * 
+   *
    * Residual Helmholtz free energy @f$ F^r @f$ for Peng-Robinson EoS can be
    * expressed by
    * @f[
@@ -114,11 +114,7 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
    */
   static Scalar residual_helmholtz_free_energy(const Scalar& z, const Scalar& a,
                                                const Scalar& b) noexcept {
-    constexpr auto sqrt2 = sqrt_two<Scalar>();
-    constexpr auto delta1 = 1 + sqrt2;
-    constexpr auto delta2 = 1 - sqrt2;
-    return std::log(z / (z - b)) +
-           a / (2 * sqrt2 * b) * std::log((z + delta2 * b) / (z + delta1 * b));
+    return std::log(z / (z - b)) + calc_q(z, a, b);
   }
 
   /**
@@ -127,7 +123,7 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
    * @param[in] a Reduced attraction parameter
    * @param[in] b Reduced repulsion parameter
    * @returns Residual Gibbs free energy
-   * 
+   *
    * Residual Gibbs free energy @f$ G^r @f$ for Peng-Robinson EoS can be
    * expressed by
    * @f[
@@ -139,13 +135,33 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
     return z - 1 + residual_helmoltz_free_energy(z, a, b);
   }
 
+  /**
+   * @brief Computes residual internal energy.
+   *
+   * @param z Z-factor
+   * @param a Attraction parameter
+   * @param b Repulsion parameter
+   * @param dlna_dlnt Logarithmic derivative of attraction correction factor in
+   * terms of temperature
+   * @return Scalar Residual internal energy
+   *
+   * @f[
+   * \frac{U^r}{NRT} = \left( 1 - \frac{d \ln \alpha}{d \ln T}) I.
+   * @f]
+   */
+  static Scalar residual_internal_energy(const Scalar& z, const Scalar& a,
+                                         const Scalar& b,
+                                         const Scalar& dlna_dlnt) noexcept {
+    return (1 - dlna_dlnt) * calc_q(z, a, b);
+  }
+
   // Constructors
 
   PengRobinsonEos() = default;
 
   /**
    * @brief Construct a new Peng Robinson Eos object
-   * 
+   *
    * @param pc Critical pressure
    * @param tc Critical temperature
    * @param omega Acentric factor
@@ -164,7 +180,7 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
 
   /**
    * @brief Set parameters
-   * 
+   *
    * @param pc Critical pressure
    * @param tc Critical temperature
    * @param omega Acentric factor
@@ -178,7 +194,7 @@ class PengRobinsonEos : public CubicEosBase<PengRobinsonEos<Scalar>> {
 
   /**
    * @brief Compute correction factor
-   * @param[in] tr Reduced temperature 
+   * @param[in] tr Reduced temperature
    */
   constexpr Scalar correction_factor(const Scalar& tr) const noexcept {
     const auto a = 1 + m_ * (1 - std::sqrt(tr));
